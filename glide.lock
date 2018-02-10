@@ -1,0 +1,10 @@
+hash: 283f1b47d9783e8467c994235f1aa157743afabc1064358e26177d38cb968876
+updated: 2018-02-10T21:22:57.706208116+01:00
+imports:
+- name: github.com/golang/protobuf
+  version: 925541529c1fa6821df4e44ce2723319eb2be768
+  subpackages:
+  - proto
+- name: github.com/jcmturner/gokrb5
+  version: 48dba5ef0aac5a0737948e1f2d38ff71880f0a72
+testImports: []

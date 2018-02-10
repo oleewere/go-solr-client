@@ -1,0 +1,8 @@
+package: github.com/oleewere/zk-client
+import:
+- package: github.com/golang/protobuf
+  version: v1.0.0
+  subpackages:
+  - proto
+- package: github.com/jcmturner/gokrb5
+  version: v4.1.0
