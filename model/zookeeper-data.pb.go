@@ -7,6 +7,9 @@ Package model is a generated protocol buffer package.
 It is generated from these files:
 	model/zookeeper-data.proto
 	model/zookeeper-proto.proto
+	model/zookeeper-quorum.proto
+	model/zookeeper-txn.proto
+	model/zookeeper-persistance.proto
 
 It has these top-level messages:
 	Id
@@ -49,6 +52,21 @@ It has these top-level messages:
 	GetChildrenResponse
 	GetChildren2Response
 	GetACLResponse
+	LearnerInfo
+	QuorumPacket
+	TxnHeader
+	CreateTxnV0
+	CreateTxn
+	DeleteTxn
+	SetDataTxn
+	CheckVersionTxn
+	SetACLTxn
+	SetMaxChildrenTxn
+	CreateSessionTxn
+	ErrorTxn
+	Txn
+	MultiTxn
+	FileHandler
 */
 package model
 

@@ -1,0 +1,69 @@
+syntax = "proto3";
+package model;
+import "model/zookeeper-data.proto";
+
+message TxnHeader {
+    int64 clientId = 1;
+    int32 cxid = 2;
+    int64 zxid = 3;
+    int64 time = 4;
+    int32 type = 5;
+}
+
+message CreateTxnV0 {
+    string path = 1;
+    bytes data = 2;
+    repeated model.ACL acl = 3;
+    bool ephemeral = 4;
+}
+
+message CreateTxn {
+    string path = 1;
+    bytes data = 2;
+    repeated model.ACL acl = 3;
+    bool ephemeral = 4;
+    int32 parentCVersion = 5;
+}
+
+message DeleteTxn {
+    string path = 1;
+}
+
+message SetDataTxn {
+    string path = 1;
+    bytes data = 2;
+    int32 version = 3;
+}
+
+message CheckVersionTxn {
+    string path = 1;
+    int32 version = 2;
+}
+
+message SetACLTxn {
+    string path = 1;
+    repeated model.ACL acl = 2;
+    int32 version = 3;
+}
+
+message SetMaxChildrenTxn {
+    string path = 1;
+    int32 max = 2;
+}
+
+message CreateSessionTxn {
+    int32 timeOut = 1;
+}
+
+message ErrorTxn {
+    int32 err = 1;
+}
+
+message Txn {
+    int32 type = 1;
+    bytes data = 2;
+}
+
+message MultiTxn {
+    repeated Txn txns = 1;
+}
