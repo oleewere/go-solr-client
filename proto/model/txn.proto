@@ -1,6 +1,6 @@
 syntax = "proto3";
 package model;
-import "model/zookeeper-data.proto";
+import "model/data.proto";
 
 message TxnHeader {
     int64 clientId = 1;
