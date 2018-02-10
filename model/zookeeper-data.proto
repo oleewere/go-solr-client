@@ -1,0 +1,50 @@
+syntax = "proto3";
+package model;
+
+message Id {
+    string scheme = 1;
+    string id = 2;
+}
+
+message ACL {
+    int32 perms = 1;
+    Id id = 2;
+}
+// information shared with the client
+message Stat {
+    int64 czxid = 1;      // created zxid
+    int64 mzxid = 2;      // last modified zxid
+    int64 ctime = 3;      // created
+    int64 mtime = 4;      // last modified
+    int32 version = 5;     // version
+    int32 cversion = 6;    // child version
+    int32 aversion = 7;    // acl version
+    int64 ephemeralOwner = 8; // owner id if ephemeral, 0 otw
+    int32 dataLength = 9;  //length of the data in the node
+    int32 numChildren = 10; //number of children of this node
+    int64 pzxid = 11;      // last modified children
+}
+// information explicitly stored by the server persistently
+message StatPersisted {
+    int64 czxid = 1;      // created zxid
+    int64 mzxid = 2;      // last modified zxid
+    int64 ctime = 3;      // created
+    int64 mtime = 4;      // last modified
+    int32 version = 5;     // version
+    int32 cversion = 6;    // child version
+    int32 aversion = 7;    // acl version
+    int64 ephemeralOwner = 8; // owner id if ephemeral, 0 otw
+    int64 pzxid = 9;      // last modified children
+}
+
+// information explicitly stored by the version 1 database of servers
+message StatPersistedV1 {
+   int64 czxid = 1; //created zxid
+   int64 mzxid = 2; //last modified zxid
+   int64 ctime = 3; //created
+   int64 mtime = 4; //last modified
+   int32 version = 5; //version
+   int32 cversion = 6; //child version
+   int32 aversion = 7; //acl version
+   int64 ephemeralOwner = 8; //owner id if ephemeral. 0 otw
+}

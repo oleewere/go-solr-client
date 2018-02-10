@@ -1,0 +1,145 @@
+syntax = "proto3";
+package model;
+import "model/zookeeper-data.proto";
+
+message ConnectRequest {
+    int32 protocolVersion = 1;
+    int64 lastZxidSeen = 2;
+    int32 timeOut = 3;
+    int64 sessionId = 4;
+    bytes passwd = 5;
+}
+message ConnectResponse {
+    int32 protocolVersion = 1;
+    int32 timeOut = 2;
+    int64 sessionId = 3;
+    bytes passwd = 4;
+}
+message SetWatches {
+    int64 relativeZxid = 1;
+    repeated string dataWatches = 2;
+    repeated string existWatches = 3;
+    repeated string childWatches = 4;
+}
+message RequestHeader {
+    int32 xid = 1;
+    int32 type = 2;
+}
+message MultiHeader {
+    int32 type = 1;
+    bool done = 2;
+    int32 err = 3;
+}
+message AuthPacket {
+    int32 type = 1;
+    string scheme = 2;
+    bytes auth = 3;
+}
+message ReplyHeader {
+    int32 xid = 1;
+    int64 zxid = 2;
+    int32 err = 3;
+}
+message GetDataRequest {
+    string path = 1;
+    bool watch = 2;
+}
+message SetDataRequest {
+    string path = 1;
+    bytes data = 2;
+    int32 version = 3;
+}
+message SetDataResponse {
+    model.Stat stat = 1;
+}
+message GetSASLRequest {
+    bytes token = 1;
+}
+message SetSASLRequest {
+    bytes token = 1;
+}
+message SetSASLResponse {
+    bytes token = 1;
+}
+message CreateRequest {
+    string path = 1;
+    bytes data = 2;
+    repeated model.ACL acl = 3;
+    int32 flags = 4;
+}
+message DeleteRequest {
+    string path = 1;
+    int32 version = 2;
+}
+message GetChildrenRequest {
+    string path = 1;
+    bool watch = 2;
+}
+message GetChildren2Request {
+    string path = 1;
+    bool watch = 2;
+}
+message CheckVersionRequest {
+    string path = 1;
+    int32 version = 2;
+}
+message GetMaxChildrenRequest {
+    string path = 1;
+}
+message GetMaxChildrenResponse {
+    int32 max = 1;
+}
+message SetMaxChildrenRequest {
+    string path = 1;
+    int32 max = 2;
+}
+message SyncRequest {
+    string path = 1;
+}
+message SyncResponse {
+    string path = 1;
+}
+message GetACLRequest {
+    string path = 1;
+}
+message SetACLRequest {
+    string path = 1;
+    repeated model.ACL acl = 2;
+    int32 version = 3;
+}
+message SetACLResponse {
+    model.Stat stat = 1;
+}
+message WatcherEvent {
+    int32 type = 1; // event type
+    int32 state = 2; // state of the Keeper client runtime
+    string path = 3;
+}
+message ErrorResponse {
+    int32 err = 1;
+}
+message CreateResponse {
+    string path = 1;
+}
+message ExistsRequest {
+    string path = 1;
+    bool watch = 2;
+}
+message ExistsResponse {
+    model.Stat stat = 1;
+}
+message GetDataResponse {
+    bytes data = 1;
+    model.Stat stat = 2;
+}
+message GetChildrenResponse {
+    repeated string children = 1;
+}
+message GetChildren2Response {
+    repeated string children = 1;
+    model.Stat stat = 2;
+}
+message GetACLResponse {
+    repeated model.ACL acl = 1;
+    model.Stat stat = 2;
+}
