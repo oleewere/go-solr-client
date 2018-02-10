@@ -13,14 +13,14 @@ message TxnHeader {
 message CreateTxnV0 {
     string path = 1;
     bytes data = 2;
-    repeated model.ACL acl = 3;
+    repeated ACL acl = 3;
     bool ephemeral = 4;
 }
 
 message CreateTxn {
     string path = 1;
     bytes data = 2;
-    repeated model.ACL acl = 3;
+    repeated ACL acl = 3;
     bool ephemeral = 4;
     int32 parentCVersion = 5;
 }
@@ -42,7 +42,7 @@ message CheckVersionTxn {
 
 message SetACLTxn {
     string path = 1;
-    repeated model.ACL acl = 2;
+    repeated ACL acl = 2;
     int32 version = 3;
 }
 

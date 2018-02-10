@@ -50,7 +50,7 @@ message SetDataRequest {
     int32 version = 3;
 }
 message SetDataResponse {
-    model.Stat stat = 1;
+    Stat stat = 1;
 }
 message GetSASLRequest {
     bytes token = 1;
@@ -64,7 +64,7 @@ message SetSASLResponse {
 message CreateRequest {
     string path = 1;
     bytes data = 2;
-    repeated model.ACL acl = 3;
+    repeated ACL acl = 3;
     int32 flags = 4;
 }
 message DeleteRequest {
@@ -104,11 +104,11 @@ message GetACLRequest {
 }
 message SetACLRequest {
     string path = 1;
-    repeated model.ACL acl = 2;
+    repeated ACL acl = 2;
     int32 version = 3;
 }
 message SetACLResponse {
-    model.Stat stat = 1;
+    Stat stat = 1;
 }
 message WatcherEvent {
     int32 type = 1; // event type
@@ -126,20 +126,20 @@ message ExistsRequest {
     bool watch = 2;
 }
 message ExistsResponse {
-    model.Stat stat = 1;
+    Stat stat = 1;
 }
 message GetDataResponse {
     bytes data = 1;
-    model.Stat stat = 2;
+    Stat stat = 2;
 }
 message GetChildrenResponse {
     repeated string children = 1;
 }
 message GetChildren2Response {
     repeated string children = 1;
-    model.Stat stat = 2;
+    Stat stat = 2;
 }
 message GetACLResponse {
-    repeated model.ACL acl = 1;
-    model.Stat stat = 2;
+    repeated ACL acl = 1;
+    Stat stat = 2;
 }

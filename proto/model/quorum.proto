@@ -11,5 +11,5 @@ message QuorumPacket {
     int32 type = 1;
     int64 zxidl = 2;
     bytes data = 3;
-    repeated model.Id authInfo = 4;
+    repeated Id authInfo = 4;
 }
