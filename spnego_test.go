@@ -4,9 +4,9 @@ import (
 	"os"
 	"fmt"
 	"net/http"
-	"github.com/jcmturner/gokrb5/keytab"
-	"github.com/jcmturner/gokrb5/client"
-	"github.com/jcmturner/gokrb5/config"
+	"gopkg.in/jcmturner/gokrb5.v4/keytab"
+	"gopkg.in/jcmturner/gokrb5.v4/client"
+	"gopkg.in/jcmturner/gokrb5.v4/config"
 	"io/ioutil"
 	"testing"
 )
