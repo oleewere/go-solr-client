@@ -1,10 +1,58 @@
-hash: 283f1b47d9783e8467c994235f1aa157743afabc1064358e26177d38cb968876
-updated: 2018-02-10T21:22:57.706208116+01:00
+hash: 4539264722b6a9e344d3122ca54872863ec9891aace294651f03040e48ef2641
+updated: 2018-02-12T00:39:39.373390826+01:00
 imports:
 - name: github.com/golang/protobuf
   version: 925541529c1fa6821df4e44ce2723319eb2be768
   subpackages:
   - proto
-- name: github.com/jcmturner/gokrb5
+- name: gopkg.in/jcmturner/gokrb5.v4
   version: 48dba5ef0aac5a0737948e1f2d38ff71880f0a72
-testImports: []
+  subpackages:
+  - asn1tools
+  - client
+  - config
+  - credentials
+  - crypto
+  - crypto/common
+  - crypto/etype
+  - crypto/rfc3961
+  - crypto/rfc3962
+  - crypto/rfc4757
+  - crypto/rfc8009
+  - gssapi
+  - iana
+  - iana/addrtype
+  - iana/adtype
+  - iana/asnAppTag
+  - iana/chksumtype
+  - iana/errorcode
+  - iana/etypeID
+  - iana/flags
+  - iana/keyusage
+  - iana/msgtype
+  - iana/nametype
+  - iana/patype
+  - keytab
+  - krberror
+  - messages
+  - mstypes
+  - ndr
+  - pac
+  - types
+testImports:
+- name: github.com/hashicorp/go-uuid
+  version: 64130c7a86d732268a38cb04cfbaf0cc987fda98
+- name: github.com/jcmturner/gofork
+  version: 2aebee971930cd0dd525873330952ab7df5ac95c
+  subpackages:
+  - encoding/asn1
+  - x/crypto/pbkdf2
+- name: golang.org/x/crypto
+  version: 9de5f2eaf759b4c4550b3db39fed2e9e5f86f45c
+  subpackages:
+  - md4
+  - pbkdf2
+- name: gopkg.in/jcmturner/aescts.v1
+  version: f6abebb3171c4c1b1fea279cb7c7325020a26290
+- name: gopkg.in/jcmturner/dnsutils.v1
+  version: 13eeb8d49ffb74d7a75784c35e4d900607a3943c
