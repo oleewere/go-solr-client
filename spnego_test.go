@@ -17,7 +17,7 @@ func TestGet(t *testing.T) {
 	krb5ConfPath := keytabsPath + "krb5.conf"
 	servicePrincipal := "infra-solr/c6401.ambari.apache.org";
 	realm := "AMBARI.APACHE.ORG"
-	request := "http://c6401.ambari.apache.org:8886/solr/admin/collections?action=LIST&wt=json"
+	request := "http://c6402.ambari.apache.org:8886/v2/c/audit_logs"
 	requestType := "GET"
 	GetWithSPNego(solrKeytab, krb5ConfPath, servicePrincipal, realm, request, requestType)
 }
