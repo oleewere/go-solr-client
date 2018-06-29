@@ -1,4 +1,4 @@
-package: github.com/oleewere/go-solr-cloud-client
+package: github.com/oleewere/native-solr-client
 import:
 - package: github.com/golang/protobuf
   version: v1.0.0
