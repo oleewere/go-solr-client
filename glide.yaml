@@ -1,8 +1,0 @@
-package: github.com/oleewere/native-solr-client
-import:
-- package: github.com/golang/protobuf
-  version: v1.0.0
-  subpackages:
-  - proto
-- package: gopkg.in/jcmturner/gokrb5.v4
-  version: v4.1.0

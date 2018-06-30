@@ -6,9 +6,10 @@ package types
 import (
 	"bytes"
 	"fmt"
+	"net"
+
 	"github.com/jcmturner/gofork/encoding/asn1"
 	"gopkg.in/jcmturner/gokrb5.v4/iana/addrtype"
-	"net"
 )
 
 /*
@@ -120,7 +121,7 @@ func LocalHostAddresses() (ha HostAddresses, err error) {
 	return ha, nil
 }
 
-// HostAddressFromNetIPs returns a HostAddresses type from a slice of net.IP
+// HostAddressesFromNetIPs returns a HostAddresses type from a slice of net.IP
 func HostAddressesFromNetIPs(ips []net.IP) (ha HostAddresses) {
 	for _, ip := range ips {
 		ha = append(ha, HostAddressFromNetIP(ip))
