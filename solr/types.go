@@ -58,3 +58,23 @@ type SolrClient struct {
 	solrConfig *SolrConfig
 	httpClient *http.Client
 }
+
+type SolrResponseData struct {
+	ResponseHeader SolrResponseHeader `json:"responseHeader"`
+	Response       SolrResponse       `json:"response"`
+}
+
+type SolrDocument map[string]interface{}
+
+type SolrResponse struct {
+	NumFound int32          `json:"numFound,omitempty"`
+	Start    int32          `json:"start,omitempty"`
+	MaxScore float32        `json:"maxScore,omitempty"`
+	Docs     []SolrDocument `json:"docs,omitempty"`
+}
+
+type SolrResponseHeader struct {
+	Status int32             `json:"status,omitempty"`
+	QTime  int32             `json:"QTime,omitempty"`
+	Params map[string]string `json:"params,omitempty"`
+}

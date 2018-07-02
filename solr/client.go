@@ -24,6 +24,7 @@ import (
 	"gopkg.in/jcmturner/gokrb5.v4/client"
 	"gopkg.in/jcmturner/gokrb5.v4/config"
 	"log"
+	"encoding/json"
 )
 
 func NewSolrClient(url string, collection string, solrConfig *SolrConfig) (*SolrClient, error) {
@@ -84,7 +85,7 @@ func InitSecurityConfig(krb5Path string, keytabPath string, principal string, re
 	return securityConfig
 }
 
-func (solrClient *SolrClient) Query(queryString string) {
+func (solrClient *SolrClient) Query(queryString string) SolrResponseData {
 	httpClient := solrClient.httpClient
 	var uriPrefix = solrClient.solrConfig.Url
 
@@ -104,7 +105,6 @@ func (solrClient *SolrClient) Query(queryString string) {
 	if solrClient.solrConfig.SecurityConfig.kerberosConfig != nil && solrClient.solrConfig.SecurityConfig.kerberosEnabled {
 		spn := ""
 		kcl := solrClient.solrConfig.SecurityConfig.kerberosConfig.kerberosClient
-		log.Printf(spn)
 		kcl.SetSPNEGOHeader(request, spn)
 	}
 	log.Print("query: ", uri)
@@ -124,5 +124,11 @@ func (solrClient *SolrClient) Query(queryString string) {
 	}
 	body := string(bodyBytes)
 
-	fmt.Print(body)
+	fmt.Println(body)
+	var solrResponse SolrResponseData
+	json_err := json.Unmarshal(bodyBytes, &solrResponse)
+	if json_err != nil {
+		log.Fatal(err)
+	}
+	return solrResponse
 }

@@ -31,7 +31,17 @@ func main() {
 	solrConfig := solr.SolrConfig{url, "hadoop_logs", &securityConfig, "/solr",
 		solr.TLSConfig{}, true, 60,}
 	solrClient, err := solr.NewSolrClient(url, collection, &solrConfig)
-	solrClient.Query("q=*:*")
+
+	response := solrClient.Query("q=*:*")
+	docs := response.Response.Docs
+	for _, doc := range docs {
+		fmt.Printf("----------------------")
+		for k, v := range doc {
+			fmt.Print("key: ", k)
+			fmt.Println(" , value: ", v)
+		}
+		fmt.Printf("----------------------")
+	}
 
 	if err != nil {
 		fmt.Print(err)
