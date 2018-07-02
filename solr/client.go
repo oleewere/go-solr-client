@@ -68,9 +68,9 @@ func NewSolrClient(url string, collection string, solrConfig *SolrConfig) (*Solr
 		solrConfig.SecurityConfig.kerberosConfig.kerberosClient = &cl
 	}
 
-    solrClient := SolrClient{httpClient: httpClient, solrConfig: solrConfig}
+	solrClient := SolrClient{httpClient: httpClient, solrConfig: solrConfig}
 
-    return &solrClient, nil
+	return &solrClient, nil
 }
 
 func InitSecurityConfig(krb5Path string, keytabPath string, principal string, realm string) SecurityConfig {
