@@ -32,7 +32,7 @@ func main() {
 		solr.TLSConfig{}, true, 60,}
 	solrClient, err := solr.NewSolrClient(url, collection, &solrConfig)
 
-	response := solrClient.Query("q=*:*")
+	response := solrClient.Query(nil)
 	docs := response.Response.Docs
 	for _, doc := range docs {
 		fmt.Printf("----------------------")
