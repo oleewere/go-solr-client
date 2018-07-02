@@ -3,3 +3,6 @@ generate-models:
 
 install:
 	go install
+
+build:
+	go build .
