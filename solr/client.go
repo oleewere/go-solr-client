@@ -43,7 +43,7 @@ func NewSolrClient(url string, collection string, solrConfig *SolrConfig) (*Solr
 
 	securityConfig := solrConfig.SecurityConfig
 
-	if len(securityConfig.kerberosConfig.keytab) != 0 {
+	if securityConfig.kerberosConfig != nil && len(securityConfig.kerberosConfig.keytab) != 0 {
 		securityConfig.kerberosEnabled = true
 	}
 
@@ -107,7 +107,7 @@ func (solrClient *SolrClient) Query(queryString string) SolrResponseData {
 		kcl := solrClient.solrConfig.SecurityConfig.kerberosConfig.kerberosClient
 		kcl.SetSPNEGOHeader(request, spn)
 	}
-	log.Print("query: ", uri)
+	log.Print("Query: ", uri)
 
 	response, err := httpClient.Do(request)
 
