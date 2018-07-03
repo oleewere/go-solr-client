@@ -65,16 +65,15 @@ func NewSolrClient(url string, collection string, solrConfig *SolrConfig) (*Solr
 		errLogin := cl.Login()
 
 		if (errLogin != nil) {
-			log.Fatal(err)
+			log.Fatal(errLogin)
 		}
 		solrConfig.SecurityConfig.kerberosConfig.kerberosClient = &cl
 	}
-
 	solrClient := SolrClient{httpClient: httpClient, solrConfig: solrConfig}
-
 	return &solrClient, nil
 }
 
+// Set initial security config on start
 func InitSecurityConfig(krb5Path string, keytabPath string, principal string, realm string) SecurityConfig {
 	var securityConfig SecurityConfig
 	if len(keytabPath) > 0 {
@@ -86,15 +85,57 @@ func InitSecurityConfig(krb5Path string, keytabPath string, principal string, re
 	return securityConfig
 }
 
-func (solrClient *SolrClient) Query(parameters *url.Values) SolrResponseData {
-	httpClient := solrClient.httpClient
-	var uriPrefix = solrClient.solrConfig.Url
+// Add WWW-Authenticate header (SPNEGO) in case of kerberos is enabled
+func AddNegotiateHeader(request *http.Request , solrConfig *SolrConfig) {
+	if solrConfig.SecurityConfig.kerberosConfig != nil && solrConfig.SecurityConfig.kerberosEnabled {
+		spn := ""
+		kcl := solrConfig.SecurityConfig.kerberosConfig.kerberosClient
+		kcl.SetSPNEGOHeader(request, spn)
+	}
+}
 
-	if len(solrClient.solrConfig.SolrUrlContext) != 0 {
-		uriPrefix = uriPrefix + "" + solrClient.solrConfig.SolrUrlContext
+// Get Solr collection url with url context (if exists) and url suffix
+// e.g.: url - https://myurl:8886, context: /solr, suffix: /update/json/docs = https://myurl:8886/solr/update/json/docs
+func GetSolrCollectionUri(solrConfig *SolrConfig, uriSuffix string) string {
+	var uriPrefix = solrConfig.Url
+	if len(solrConfig.SolrUrlContext) != 0 {
+		uriPrefix = uriPrefix + "" + solrConfig.SolrUrlContext
+	}
+	uri := fmt.Sprintf("%s/%s/%s", uriPrefix, solrConfig.Collection, uriSuffix)
+	return uri
+}
+
+func (solrClient* SolrClient) Update(docs interface{}, parameters *url.Values, commit bool) error {
+	httpClient := solrClient.httpClient
+	uri := GetSolrCollectionUri(solrClient.solrConfig, "update/json/docs")
+	var buf bytes.Buffer
+	if docs != nil {
+		enc := json.NewEncoder(&buf)
+		if err := enc.Encode(docs); err != nil {
+			return err
+		}
+	}
+	request, err := http.NewRequest("POST", uri, &buf)
+	if err != nil {
+		log.Fatal(err)
+	}
+	request.Header.Add("Content-Type", "application/json")
+	AddNegotiateHeader(request, solrClient.solrConfig)
+
+	response, err := httpClient.Do(request)
+
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	uri := fmt.Sprintf("%s/%s/select", uriPrefix, solrClient.solrConfig.Collection)
+	defer response.Body.Close()
+
+	return nil
+}
+
+func (solrClient *SolrClient) Query(parameters *url.Values) SolrResponseData {
+	httpClient := solrClient.httpClient
+	uri := GetSolrCollectionUri(solrClient.solrConfig, "select")
 	var buf bytes.Buffer
 	request, err := http.NewRequest("POST", uri, &buf)
 	if err != nil {
@@ -106,15 +147,10 @@ func (solrClient *SolrClient) Query(parameters *url.Values) SolrResponseData {
 		parameters.Add("q", "*:*")
 	}
 
-
 	request.URL.RawQuery = parameters.Encode()
 	request.Header.Add("Content-Type", "application/json")
 
-	if solrClient.solrConfig.SecurityConfig.kerberosConfig != nil && solrClient.solrConfig.SecurityConfig.kerberosEnabled {
-		spn := ""
-		kcl := solrClient.solrConfig.SecurityConfig.kerberosConfig.kerberosClient
-		kcl.SetSPNEGOHeader(request, spn)
-	}
+	AddNegotiateHeader(request, solrClient.solrConfig)
 	log.Print("Query: ", uri)
 
 	response, err := httpClient.Do(request)
