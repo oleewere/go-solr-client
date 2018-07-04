@@ -12,7 +12,6 @@ var Version string
 var GitRevString string
 
 func main() {
-	fmt.Print("Start Solr Cloud Client ...\n")
 
 	var collection string
 	var url string
@@ -40,6 +39,8 @@ func main() {
 		}
 		os.Exit(0)
 	}
+
+	fmt.Print("Start Solr Cloud Client ...\n")
 
 	securityConfig := solr.InitSecurityConfig(krb5Path, keytabPath, principal, realm)
 
