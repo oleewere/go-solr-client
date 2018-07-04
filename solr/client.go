@@ -85,6 +85,13 @@ func InitSecurityConfig(krb5Path string, keytabPath string, principal string, re
 	return securityConfig
 }
 
+// Add Auth header with basic auth credentials
+func AddBasicAuthHeader(request *http.Request, solrConfig *SolrConfig) {
+	if solrConfig.SecurityConfig.basicAuthConfig != nil && solrConfig.SecurityConfig.basicAuthEnabled {
+		request.SetBasicAuth(solrConfig.SecurityConfig.basicAuthConfig.username, solrConfig.SecurityConfig.basicAuthConfig.password)
+	}
+}
+
 // Add WWW-Authenticate header (SPNEGO) in case of kerberos is enabled
 func AddNegotiateHeader(request *http.Request , solrConfig *SolrConfig) {
 	if solrConfig.SecurityConfig.kerberosConfig != nil && solrConfig.SecurityConfig.kerberosEnabled {
@@ -121,6 +128,8 @@ func (solrClient* SolrClient) Update(docs interface{}, parameters *url.Values, c
 	}
 
 	request.Header.Add("Content-Type", "application/json")
+
+	AddBasicAuthHeader(request, solrClient.solrConfig)
 	AddNegotiateHeader(request, solrClient.solrConfig)
 
 	response, err := httpClient.Do(request)
@@ -159,7 +168,9 @@ func (solrClient *SolrClient) Query(parameters *url.Values) (bool, *SolrResponse
 	request.URL.RawQuery = parameters.Encode()
 	request.Header.Add("Content-Type", "application/json")
 
+	AddBasicAuthHeader(request, solrClient.solrConfig)
 	AddNegotiateHeader(request, solrClient.solrConfig)
+
 	log.Print("Query: ", uri)
 
 	response, err := httpClient.Do(request)
