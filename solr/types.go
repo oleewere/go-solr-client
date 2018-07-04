@@ -66,6 +66,8 @@ type SolrResponseData struct {
 
 type SolrDocument map[string]interface{}
 
+type SolrDocuments []SolrDocument
+
 type SolrResponse struct {
 	NumFound int32          `json:"numFound,omitempty"`
 	Start    int32          `json:"start,omitempty"`

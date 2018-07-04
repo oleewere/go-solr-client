@@ -110,8 +110,8 @@ func (solrClient* SolrClient) Update(docs interface{}, parameters *url.Values, c
 	uri := GetSolrCollectionUri(solrClient.solrConfig, "update/json/docs")
 	var buf bytes.Buffer
 	if docs != nil {
-		enc := json.NewEncoder(&buf)
-		if err := enc.Encode(docs); err != nil {
+		encoder := json.NewEncoder(&buf)
+		if err := encoder.Encode(docs); err != nil {
 			return err
 		}
 	}
@@ -119,6 +119,7 @@ func (solrClient* SolrClient) Update(docs interface{}, parameters *url.Values, c
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	request.Header.Add("Content-Type", "application/json")
 	AddNegotiateHeader(request, solrClient.solrConfig)
 
@@ -166,9 +167,7 @@ func (solrClient *SolrClient) Query(parameters *url.Values) SolrResponseData {
 	if (err != nil) {
 		log.Fatal(err)
 	}
-	body := string(bodyBytes)
 
-	fmt.Println(body)
 	var solrResponse SolrResponseData
 	json_err := json.Unmarshal(bodyBytes, &solrResponse)
 	if json_err != nil {

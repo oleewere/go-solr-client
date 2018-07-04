@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/oleewere/native-solr-client/solr"
+	"github.com/satori/go.uuid"
 )
 
 func main() {
@@ -42,6 +43,26 @@ func main() {
 		}
 		fmt.Printf("----------------------")
 	}
+
+	putDocs := solr.SolrDocuments{
+		solr.SolrDocument {
+				"id" : uuid.NewV4(),
+				"log_message":"oleewere@gmail.com",
+				"seq_num": 100,
+				"level": "FATAL",
+				"logtime": "2018-07-03T15:55:47.396Z",
+			},
+		solr.SolrDocument{
+			    "id" : uuid.NewV4(),
+				"log_message":"oleewere@gmail.com",
+				"seq_num": 1000,
+				"level": "FATAL",
+				"logtime": "2018-07-03T15:55:47.396Z",
+				},
+				}
+	fmt.Println(putDocs)
+
+	//solrClient.Update(putDocs, nil, false)
 
 	if err != nil {
 		fmt.Print(err)
