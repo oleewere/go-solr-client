@@ -105,19 +105,19 @@ func GetSolrCollectionUri(solrConfig *SolrConfig, uriSuffix string) string {
 	return uri
 }
 
-func (solrClient* SolrClient) Update(docs interface{}, parameters *url.Values, commit bool) error {
+func (solrClient* SolrClient) Update(docs interface{}, parameters *url.Values, commit bool) (bool, *SolrResponseData, error) {
 	httpClient := solrClient.httpClient
 	uri := GetSolrCollectionUri(solrClient.solrConfig, "update/json/docs")
 	var buf bytes.Buffer
 	if docs != nil {
 		encoder := json.NewEncoder(&buf)
 		if err := encoder.Encode(docs); err != nil {
-			return err
+			return false, nil, err
 		}
 	}
 	request, err := http.NewRequest("POST", uri, &buf)
 	if err != nil {
-		log.Fatal(err)
+		return false, nil, err
 	}
 
 	request.Header.Add("Content-Type", "application/json")
@@ -126,21 +126,29 @@ func (solrClient* SolrClient) Update(docs interface{}, parameters *url.Values, c
 	response, err := httpClient.Do(request)
 
 	if err != nil {
-		log.Fatal(err)
+		return false, nil, err
 	}
 
 	defer response.Body.Close()
 
-	return nil
+	bodyBytes, err := ioutil.ReadAll(response.Body)
+
+	var solrResponse SolrResponseData
+	json_err := json.Unmarshal(bodyBytes, &solrResponse)
+	if json_err != nil {
+		return false, nil, json_err
+	}
+
+	return true, &solrResponse, nil
 }
 
-func (solrClient *SolrClient) Query(parameters *url.Values) SolrResponseData {
+func (solrClient *SolrClient) Query(parameters *url.Values) (bool, *SolrResponseData, error) {
 	httpClient := solrClient.httpClient
 	uri := GetSolrCollectionUri(solrClient.solrConfig, "select")
 	var buf bytes.Buffer
 	request, err := http.NewRequest("POST", uri, &buf)
 	if err != nil {
-		log.Fatal(err)
+		return false, nil, err
 	}
 
 	if parameters == nil {
@@ -157,7 +165,7 @@ func (solrClient *SolrClient) Query(parameters *url.Values) SolrResponseData {
 	response, err := httpClient.Do(request)
 
 	if err != nil {
-		log.Fatal(err)
+		return false, nil, err
 	}
 
 	defer response.Body.Close()
@@ -165,13 +173,13 @@ func (solrClient *SolrClient) Query(parameters *url.Values) SolrResponseData {
 	bodyBytes, err := ioutil.ReadAll(response.Body)
 
 	if (err != nil) {
-		log.Fatal(err)
+		return false, nil, err
 	}
 
 	var solrResponse SolrResponseData
 	json_err := json.Unmarshal(bodyBytes, &solrResponse)
 	if json_err != nil {
-		log.Fatal(err)
+		return false, nil, json_err
 	}
-	return solrResponse
+	return true, &solrResponse, nil
 }

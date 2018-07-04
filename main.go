@@ -33,7 +33,7 @@ func main() {
 		solr.TLSConfig{}, true, 60,}
 	solrClient, err := solr.NewSolrClient(url, collection, &solrConfig)
 
-	response := solrClient.Query(nil)
+	_, response, _ := solrClient.Query(nil)
 	docs := response.Response.Docs
 	for _, doc := range docs {
 		fmt.Printf("----------------------")
@@ -62,7 +62,7 @@ func main() {
 				}
 	fmt.Println(putDocs)
 
-	//solrClient.Update(putDocs, nil, false)
+	solrClient.Update(putDocs, nil, false)
 
 	if err != nil {
 		fmt.Print(err)
