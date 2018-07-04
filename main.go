@@ -74,7 +74,6 @@ func main() {
 			"logtime":     "2018-07-03T15:55:47.396Z",
 		},
 	}
-	fmt.Println(putDocs)
 
 	solrClient.Update(putDocs, nil, false)
 
