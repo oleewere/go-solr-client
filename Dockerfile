@@ -14,7 +14,7 @@ FROM golang:1.10-alpine
 
 ADD . /go/src/github.com/oleewere/native-solr-client
 WORKDIR /go/src/github.com/oleewere/native-solr-client
-RUN go build -o /native-solr-client main.go
+RUN go build -o /native-solr-client .
 
 FROM alpine:3.7
 RUN apk add --no-cache ca-certificates
