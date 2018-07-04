@@ -114,7 +114,7 @@ func GetSolrCollectionUri(solrConfig *SolrConfig, uriSuffix string) string {
 
 func (solrClient* SolrClient) Update(docs interface{}, parameters *url.Values, commit bool) (bool, *SolrResponseData, error) {
 	httpClient := solrClient.httpClient
-	uri := GetSolrCollectionUri(solrClient.solrConfig, "update/json/docs")
+	uri := GetSolrCollectionUri(solrClient.solrConfig, "update")
 	var buf bytes.Buffer
 	if docs != nil {
 		encoder := json.NewEncoder(&buf)
