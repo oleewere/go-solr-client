@@ -8,6 +8,9 @@ import (
 	"github.com/satori/go.uuid"
 )
 
+var Version string
+var GitRevString string
+
 func main() {
 	fmt.Print("Start Solr Cloud Client ...\n")
 
@@ -17,7 +20,9 @@ func main() {
 	var keytabPath string
 	var principal string
 	var realm string
+	var isVersionCheck bool
 
+	flag.BoolVar(&isVersionCheck, "version", false, "Print application version and git revision if available")
 	flag.StringVar(&url, "url", "http://localhost:8983", "URL name for Solr or Solr proxy")
 	flag.StringVar(&collection, "collection", "hadoop_logs", "Collection name for the Solr client")
 	flag.StringVar(&krb5Path, "krb-conf-path", "", "Kerberos config location")
@@ -26,6 +31,15 @@ func main() {
 	flag.StringVar(&realm, "realm", "", "Kerberos Realm e.g.: EXAMPLE.COM")
 
 	flag.Parse()
+
+	if isVersionCheck {
+		if GitRevString == "" {
+			fmt.Println("version:", Version)
+		} else {
+			fmt.Printf("version: %s (git revision: %s)\n", Version, GitRevString)
+		}
+		os.Exit(0)
+	}
 
 	securityConfig := solr.InitSecurityConfig(krb5Path, keytabPath, principal, realm)
 
