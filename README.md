@@ -1,7 +1,6 @@
 ## Go Solr Client
 
-[![Build Status](https://travis-ci.org/oleewere/native-solr-client.svg?branch=master)](https://travis-ci.org/oleewere/native-solr-client)
-
+[![Build Status](https://travis-ci.org/oleewere/go-solr-client.svg?branch=master)](https://travis-ci.org/oleewere/go-solr-client)
 
 ### IN PROGRESS
 
