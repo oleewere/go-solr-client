@@ -1,8 +1,0 @@
-syntax = "proto3";
-package model;
-
-message FileHandler {
-    int32 magic = 1;
-    int32 version = 2;
-    int64 dbid = 3;
-}
