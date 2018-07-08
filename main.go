@@ -4,7 +4,7 @@ import "os"
 import (
 	"flag"
 	"fmt"
-	"github.com/oleewere/native-solr-client/solr"
+	"github.com/oleewere/go-solr-client/solr"
 	"github.com/satori/go.uuid"
 )
 
