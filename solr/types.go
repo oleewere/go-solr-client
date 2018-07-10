@@ -15,8 +15,8 @@
 package solr
 
 import (
-	"net/http"
 	"gopkg.in/jcmturner/gokrb5.v4/client"
+	"net/http"
 )
 
 type KerberosConfig struct {

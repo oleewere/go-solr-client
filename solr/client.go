@@ -15,17 +15,17 @@
 package solr
 
 import (
-	"time"
-	"net/http"
-	"fmt"
 	"bytes"
-	"io/ioutil"
-	"gopkg.in/jcmturner/gokrb5.v4/keytab"
+	"encoding/json"
+	"fmt"
 	"gopkg.in/jcmturner/gokrb5.v4/client"
 	"gopkg.in/jcmturner/gokrb5.v4/config"
+	"gopkg.in/jcmturner/gokrb5.v4/keytab"
+	"io/ioutil"
 	"log"
-	"encoding/json"
+	"net/http"
 	"net/url"
+	"time"
 )
 
 func NewSolrClient(url string, collection string, solrConfig *SolrConfig) (*SolrClient, error) {
@@ -56,7 +56,7 @@ func NewSolrClient(url string, collection string, solrConfig *SolrConfig) (*Solr
 
 		kt, err := keytab.Load(keytabPath)
 
-		if (err != nil) {
+		if err != nil {
 			log.Fatal(err)
 		}
 		cfg, err := config.Load(krb5confPath)
@@ -64,7 +64,7 @@ func NewSolrClient(url string, collection string, solrConfig *SolrConfig) (*Solr
 		cl.WithConfig(cfg)
 		errLogin := cl.Login()
 
-		if (errLogin != nil) {
+		if errLogin != nil {
 			log.Fatal(errLogin)
 		}
 		solrConfig.SecurityConfig.kerberosConfig.kerberosClient = &cl
@@ -93,7 +93,7 @@ func AddBasicAuthHeader(request *http.Request, solrConfig *SolrConfig) {
 }
 
 // Add WWW-Authenticate header (SPNEGO) in case of kerberos is enabled
-func AddNegotiateHeader(request *http.Request , solrConfig *SolrConfig) {
+func AddNegotiateHeader(request *http.Request, solrConfig *SolrConfig) {
 	if solrConfig.SecurityConfig.kerberosConfig != nil && solrConfig.SecurityConfig.kerberosEnabled {
 		spn := ""
 		kcl := solrConfig.SecurityConfig.kerberosConfig.kerberosClient
@@ -112,7 +112,7 @@ func GetSolrCollectionUri(solrConfig *SolrConfig, uriSuffix string) string {
 	return uri
 }
 
-func (solrClient* SolrClient) Update(docs interface{}, parameters *url.Values, commit bool) (bool, *SolrResponseData, error) {
+func (solrClient *SolrClient) Update(docs interface{}, parameters *url.Values, commit bool) (bool, *SolrResponseData, error) {
 	httpClient := solrClient.httpClient
 	uri := GetSolrCollectionUri(solrClient.solrConfig, "update")
 	var buf bytes.Buffer
@@ -183,7 +183,7 @@ func (solrClient *SolrClient) Query(parameters *url.Values) (bool, *SolrResponse
 
 	bodyBytes, err := ioutil.ReadAll(response.Body)
 
-	if (err != nil) {
+	if err != nil {
 		return false, nil, err
 	}
 

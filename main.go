@@ -45,7 +45,7 @@ func main() {
 	securityConfig := solr.InitSecurityConfig(krb5Path, keytabPath, principal, realm)
 
 	solrConfig := solr.SolrConfig{url, "hadoop_logs", &securityConfig, "/solr",
-		solr.TLSConfig{}, true, 60,}
+		solr.TLSConfig{}, true, 60}
 	solrClient, err := solr.NewSolrClient(url, collection, &solrConfig)
 
 	_, response, _ := solrClient.Query(nil)
