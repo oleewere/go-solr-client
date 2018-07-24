@@ -86,5 +86,7 @@ type SSHConfig struct {
 	Username         string
 	PrivateKeyPath   string
 	DownloadLocation string
+	RemoteKrb5Conf   string
+	RemoteKeytab     string
 	Hostname         string
 }

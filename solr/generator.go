@@ -18,14 +18,16 @@ import (
 	"io/ioutil"
 	"golang.org/x/crypto/ssh"
 	"log"
-	"fmt"
 	"os"
-	"io"
+	"fmt"
+	"github.com/pkg/sftp"
+	"github.com/go-ini/ini"
+	"github.com/satori/go.uuid"
+	"strings"
 )
 
 // Use to generate Solr data, also scp keytab file to local if kerberos and ssl config is enabled
-func GenerateSolrData(solrConfig *SolrConfig, sshConfig *SSHConfig) {
-
+func GenerateSolrData(solrConfig *SolrConfig, sshConfig *SSHConfig, iniFileLocation string) {
 	if sshConfig.Enabled {
 		privateKeyContent, err := ioutil.ReadFile(sshConfig.PrivateKeyPath)
 		if err != nil {
@@ -39,40 +41,77 @@ func GenerateSolrData(solrConfig *SolrConfig, sshConfig *SSHConfig) {
 			},
 			HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 		}
-		sshClient, err := ssh.Dial("tcp", sshConfig.Hostname + ":22", clientConfig)
+		client, err := ssh.Dial("tcp", sshConfig.Hostname + ":22", clientConfig)
 		if err != nil {
 			panic("Failed to dial: " + err.Error())
 		}
-		session, err := sshClient.NewSession()
-		if err != nil {
-			panic("Failed to create session: " + err.Error())
-		}
-		defer session.Close()
-
-		r, err := session.StdoutPipe()
+		sftpClient, err := sftp.NewClient(client)
 		if err != nil {
 			log.Fatal(err)
 		}
-		name := fmt.Sprintf("%s/krb5.conf", sshConfig.DownloadLocation)
-		file, err := os.OpenFile(name, os.O_APPEND | os.O_WRONLY | os.O_CREATE, 0644)
-		if err != nil {
-			log.Fatal(err)
-		}
+		defer sftpClient.Close()
 
-		if err := session.Start("cat /etc/krb5.conf"); err != nil {
-			log.Fatal(err)
-		}
-
-		n, err := io.Copy(file, r)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		log.Print(n)
-
-		if err := session.Wait(); err != nil {
-			log.Fatal(err)
-		}
-
+		copyFileToLocal(sshConfig.RemoteKrb5Conf, solrConfig.SecurityConfig.kerberosConfig.krb5confPath, sftpClient)
+		copyFileToLocal(sshConfig.RemoteKeytab, solrConfig.SecurityConfig.kerberosConfig.keytab, sftpClient)
 	}
+
+	cfg, err := ini.Load(iniFileLocation)
+	if err != nil {
+		log.Fatal("Fail to read file: " + iniFileLocation)
+	}
+	numWrites, err := cfg.Section("generator").Key("num_writes").Int()
+	clusterField := cfg.Section("generator").Key("cluster_field").String()
+	clusterNum, err := cfg.Section("generator").Key("cluster_num").Int()
+	hostnameField := cfg.Section("generator").Key("hostname_field").String()
+	hostnameNum, err := cfg.Section("generator").Key("hostname_num").Int()
+	levelField := cfg.Section("generator").Key("level_field").String()
+	levels := strings.Split(cfg.Section("generator").Key("level_values").String(), ",")
+	typeField := cfg.Section("generator").Key("type_field").String()
+	types := strings.Split(cfg.Section("generator").Key("type_values").String(), ",")
+	dateField := cfg.Section("generator").Key("date_field").String()
+	datePattern := cfg.Section("generator").Key("date_pattern").String()
+	messageFields := strings.Split(cfg.Section("generator").Key("message_fields").String(), ",")
+	numFields := strings.Split(cfg.Section("generator").Key("num_fields").String(), ",")
+
+	for i := 1; i <= numWrites; i++ {
+		putDocs := SolrDocuments{}
+		for i := 1; i <= 10; i++ {
+			solrDoc :=  make(map[string]interface{})
+			solrDoc["id"] = uuid.NewV4()
+
+			putDocs = append(putDocs, solrDoc)
+		}
+	}
+
+	os.Exit(0)
+
+	solrClient, err := NewSolrClient(solrConfig)
+
+	_, response, _ := solrClient.Query(nil)
+	docs := response.Response.Docs
+	for _, doc := range docs {
+		fmt.Printf("----------------------")
+		for k, v := range doc {
+			fmt.Print("key: ", k)
+			fmt.Println(" , value: ", v)
+		}
+		fmt.Printf("----------------------")
+	}
+
+	if err != nil {
+		fmt.Print(err)
+	}
+}
+func copyFileToLocal(srcFilePath string, destFilePath string, sftpClient *sftp.Client) {
+	srcFile, err := sftpClient.Open(srcFilePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer srcFile.Close()
+	destFile, err := os.Create(destFilePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer destFile.Close()
+	srcFile.WriteTo(destFile)
 }

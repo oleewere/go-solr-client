@@ -57,11 +57,11 @@ func main() {
 
 	solrConfig, sshConfig := solr.GenerateSolrConfig(iniFileLocation)
 
-	solr.GenerateSolrData(&solrConfig, &sshConfig)
+	solr.GenerateSolrData(&solrConfig, &sshConfig, iniFileLocation)
 
 	os.Exit(0)
 
-	solrClient, err := solr.NewSolrClient(url, collection, &solrConfig)
+	solrClient, err := solr.NewSolrClient(&solrConfig)
 
 	_, response, _ := solrClient.Query(nil)
 	docs := response.Response.Docs

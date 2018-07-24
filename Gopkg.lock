@@ -23,6 +23,24 @@
   revision = "2aebee971930cd0dd525873330952ab7df5ac95c"
 
 [[projects]]
+  name = "github.com/kr/fs"
+  packages = ["."]
+  revision = "1455def202f6e05b95cc7bfc7e8ae67ae5141eba"
+  version = "v0.1.0"
+
+[[projects]]
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
+
+[[projects]]
+  name = "github.com/pkg/sftp"
+  packages = ["."]
+  revision = "57673e38ea946592a59c26592b7e6fbda646975b"
+  version = "v1.8.0"
+
+[[projects]]
   name = "github.com/satori/go.uuid"
   packages = ["."]
   revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
@@ -97,6 +115,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d1608f4437e0665badf21e155f04d26d36bb368d9cb682fdac5572761c9bb235"
+  inputs-digest = "4e9b7684b19c827985b7eac8e1da3d5a9429603ee7dc058c9ab3a55b694aa77b"
   solver-name = "gps-cdcl"
   solver-version = 1

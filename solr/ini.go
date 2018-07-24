@@ -24,10 +24,10 @@ func GenerateIniFile(iniFileLocation string) {
 
 	cfg.NewSection("security")
 	cfg.Section("security").NewKey("kerberosEnabled", "false")
-	cfg.Section("security").NewKey("kerberosKeytab", "/etc/security/keytabs/solr.keytab")
+	cfg.Section("security").NewKey("kerberosKeytab", "/tmp/solr.keytab")
 	cfg.Section("security").NewKey("kerberosPrincipal", "solr/myhostname")
 	cfg.Section("security").NewKey("kerberosRealm", "EXAMPLE.COM")
-	cfg.Section("security").NewKey("kerberosKrb5Path", "/etc/krb5.conf")
+	cfg.Section("security").NewKey("kerberosKrb5Path", "/tmp/krb5.conf")
 
 	cfg.NewSection("solr")
 	cfg.Section("solr").NewKey("url", "http://localhost:8983")
@@ -42,7 +42,23 @@ func GenerateIniFile(iniFileLocation string) {
 	cfg.Section("ssh").NewKey("hostname", "myremotehost")
 	cfg.Section("ssh").NewKey("private_key_path", "/keys/private_key")
 	cfg.Section("ssh").NewKey("download_location", "/tmp")
+	cfg.Section("ssh").NewKey("remote_krb5_conf", "/etc/krb5.conf")
+	cfg.Section("ssh").NewKey("remote_keytab", "/etc/security/keytabs/solr.service.keytab")
 
+	cfg.NewSection("generator")
+	cfg.Section("generator").NewKey("num_writes", "10")
+	cfg.Section("generator").NewKey("clusters_field", "cluster")
+	cfg.Section("generator").NewKey("clusters_num", "10")
+	cfg.Section("generator").NewKey("hostname_field", "host")
+	cfg.Section("generator").NewKey("hostname_num", "1000")
+	cfg.Section("generator").NewKey("level_field", "level")
+	cfg.Section("generator").NewKey("level_values", "INFO,DEBUG,FATAL,WARN,ERROR,UNKNOWN,TRACE")
+	cfg.Section("generator").NewKey("type_field", "type")
+	cfg.Section("generator").NewKey("type_values", "ambari_server,ambari_agent,ambari_config,ambari_eclipselink,hdfs_name_node,hdfs_secondary_name_node")
+	cfg.Section("generator").NewKey("date_field", "logtime")
+	cfg.Section("generator").NewKey("date_pattern", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+	cfg.Section("generator").NewKey("message_fields", "log_message")
+	cfg.Section("generator").NewKey("num_fields", "seq_num")
 	cfg.SaveTo(iniFileLocation)
 }
 
@@ -52,26 +68,25 @@ func GenerateSolrConfig(iniFileLocation string) (SolrConfig, SSHConfig) {
 		log.Fatal("Fail to read file: " + iniFileLocation)
 	}
 
-	cfg.NewSection("security")
 	kerberosEnabled, err := cfg.Section("security").Key("kerberosEnabled").Bool()
 	keytabPath := cfg.Section("security").Key("kerberosKeytab").String()
 	principal := cfg.Section("security").Key("kerberosPrincipal").String()
 	realm := cfg.Section("security").Key("kerberosRealm").String()
 	krb5Path := cfg.Section("security").Key("kerberosKrb5Path").String()
 
-	cfg.NewSection("solr")
 	solrUrl := cfg.Section("solr").Key("url").String()
 	solrContext := cfg.Section("solr").Key("context").String()
 	solrCollection := cfg.Section("solr").Key("collection").String()
 	solrTlsEnabled, err := cfg.Section("solr").Key("ssl").Bool()
 	solrConnectionTimeout, err := cfg.Section("solr").Key("connection_timeout").Int()
 
-	cfg.NewSection("ssh")
 	sshEnabled, err := cfg.Section("ssh").Key("enabled").Bool()
 	sshUsername := cfg.Section("ssh").Key("username").String()
 	sshHostname := cfg.Section("ssh").Key("hostname").String()
 	sshPrivateKeyPath := cfg.Section("ssh").Key("private_key_path").String()
 	sshDownloadLocation := cfg.Section("ssh").Key("download_location").String()
+	remoteKrb5Conf := cfg.Section("ssh").Key("remote_krb5_conf").String()
+	remoteKeytab := cfg.Section("ssh").Key("remote_keytab").String()
 
 	securityConfig := SecurityConfig{}
 	if kerberosEnabled {
@@ -82,7 +97,7 @@ func GenerateSolrConfig(iniFileLocation string) (SolrConfig, SSHConfig) {
 		TLSConfig{}, !solrTlsEnabled, solrConnectionTimeout}
 
 	sshConfig := SSHConfig{Enabled: sshEnabled, Username: sshUsername, PrivateKeyPath: sshPrivateKeyPath,
-		DownloadLocation: sshDownloadLocation, Hostname: sshHostname}
+		DownloadLocation: sshDownloadLocation, RemoteKrb5Conf: remoteKrb5Conf, RemoteKeytab: remoteKeytab, Hostname: sshHostname}
 
 	return solrConfig, sshConfig
 }
