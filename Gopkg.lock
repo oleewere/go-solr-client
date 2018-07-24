@@ -2,10 +2,10 @@
 
 
 [[projects]]
-  name = "github.com/golang/protobuf"
-  packages = ["proto"]
-  revision = "b4deda0973fb4c70b50d226b1af49f3da59f5265"
-  version = "v1.1.0"
+  name = "github.com/go-ini/ini"
+  packages = ["."]
+  revision = "358ee7663966325963d4e8b2e1fbd570c5195153"
+  version = "v1.38.1"
 
 [[projects]]
   branch = "master"
@@ -32,10 +32,17 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = [
+    "curve25519",
+    "ed25519",
+    "ed25519/internal/edwards25519",
+    "internal/chacha20",
+    "internal/subtle",
     "md4",
-    "pbkdf2"
+    "pbkdf2",
+    "poly1305",
+    "ssh"
   ]
-  revision = "a49355c7e3f8fe157a85be2f77e6e269a0f89602"
+  revision = "c126467f60eb25f8f27e5a981f32a87e3965053f"
 
 [[projects]]
   name = "gopkg.in/jcmturner/aescts.v1"
@@ -90,6 +97,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2b0b2879bbd99bc62ca63eb5d4b282e2cc84edf69b1fb2b93f443f5d5eb3e197"
+  inputs-digest = "d1608f4437e0665badf21e155f04d26d36bb368d9cb682fdac5572761c9bb235"
   solver-name = "gps-cdcl"
   solver-version = 1
