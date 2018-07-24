@@ -1,0 +1,88 @@
+// Copyright 2018 Oliver Szabo
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package solr
+
+import (
+	"github.com/go-ini/ini"
+	"log"
+)
+
+func GenerateIniFile(iniFileLocation string) {
+	cfg := ini.Empty()
+
+	cfg.NewSection("security")
+	cfg.Section("security").NewKey("kerberosEnabled", "false")
+	cfg.Section("security").NewKey("kerberosKeytab", "/etc/security/keytabs/solr.keytab")
+	cfg.Section("security").NewKey("kerberosPrincipal", "solr/myhostname")
+	cfg.Section("security").NewKey("kerberosRealm", "EXAMPLE.COM")
+	cfg.Section("security").NewKey("kerberosKrb5Path", "/etc/krb5.conf")
+
+	cfg.NewSection("solr")
+	cfg.Section("solr").NewKey("url", "http://localhost:8983")
+	cfg.Section("solr").NewKey("context", "/solr")
+	cfg.Section("solr").NewKey("collection", "hadoop_logs")
+	cfg.Section("solr").NewKey("ssl", "false")
+	cfg.Section("solr").NewKey("connection_timeout", "60")
+
+	cfg.NewSection("ssh")
+	cfg.Section("ssh").NewKey("enabled", "false")
+	cfg.Section("ssh").NewKey("username", "root")
+	cfg.Section("ssh").NewKey("hostname", "myremotehost")
+	cfg.Section("ssh").NewKey("private_key_path", "/keys/private_key")
+	cfg.Section("ssh").NewKey("download_location", "/tmp")
+
+	cfg.SaveTo(iniFileLocation)
+}
+
+func GenerateSolrConfig(iniFileLocation string) (SolrConfig, SSHConfig) {
+	cfg, err := ini.Load(iniFileLocation)
+	if err != nil {
+		log.Fatal("Fail to read file: " + iniFileLocation)
+	}
+
+	cfg.NewSection("security")
+	kerberosEnabled, err := cfg.Section("security").Key("kerberosEnabled").Bool()
+	keytabPath := cfg.Section("security").Key("kerberosKeytab").String()
+	principal := cfg.Section("security").Key("kerberosPrincipal").String()
+	realm := cfg.Section("security").Key("kerberosRealm").String()
+	krb5Path := cfg.Section("security").Key("kerberosKrb5Path").String()
+
+	cfg.NewSection("solr")
+	solrUrl := cfg.Section("solr").Key("url").String()
+	solrContext := cfg.Section("solr").Key("context").String()
+	solrCollection := cfg.Section("solr").Key("collection").String()
+	solrTlsEnabled, err := cfg.Section("solr").Key("ssl").Bool()
+	solrConnectionTimeout, err := cfg.Section("solr").Key("connection_timeout").Int()
+
+	cfg.NewSection("ssh")
+	sshEnabled, err := cfg.Section("ssh").Key("enabled").Bool()
+	sshUsername := cfg.Section("ssh").Key("username").String()
+	sshHostname := cfg.Section("ssh").Key("hostname").String()
+	sshPrivateKeyPath := cfg.Section("ssh").Key("private_key_path").String()
+	sshDownloadLocation := cfg.Section("ssh").Key("download_location").String()
+
+	securityConfig := SecurityConfig{}
+	if kerberosEnabled {
+		securityConfig = InitSecurityConfig(krb5Path, keytabPath, principal, realm)
+	}
+
+	solrConfig := SolrConfig{solrUrl, solrCollection, &securityConfig, solrContext,
+		TLSConfig{}, !solrTlsEnabled, solrConnectionTimeout}
+
+	sshConfig := SSHConfig{Enabled: sshEnabled, Username: sshUsername, PrivateKeyPath: sshPrivateKeyPath,
+		DownloadLocation: sshDownloadLocation, Hostname: sshHostname}
+
+	return solrConfig, sshConfig
+}
