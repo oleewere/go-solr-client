@@ -80,3 +80,11 @@ type SolrResponseHeader struct {
 	QTime  int32             `json:"QTime,omitempty"`
 	Params map[string]string `json:"params,omitempty"`
 }
+
+type SSHConfig struct {
+	Enabled          bool
+	Username         string
+	PrivateKeyPath   string
+	DownloadLocation string
+	Hostname         string
+}
