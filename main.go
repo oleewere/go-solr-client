@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/oleewere/go-solr-client/solr"
 	"github.com/satori/go.uuid"
+	"log"
 )
 
 var Version string
@@ -20,9 +21,11 @@ func main() {
 	var principal string
 	var realm string
 	var isVersionCheck bool
+	var iniFileLocation string
 
 	flag.BoolVar(&isVersionCheck, "version", false, "Print application version and git revision if available")
 	flag.StringVar(&url, "url", "http://localhost:8983", "URL name for Solr or Solr proxy")
+	flag.StringVar(&iniFileLocation, "ini-file", "", "INI config file location")
 	flag.StringVar(&collection, "collection", "hadoop_logs", "Collection name for the Solr client")
 	flag.StringVar(&krb5Path, "krb-conf-path", "", "Kerberos config location")
 	flag.StringVar(&keytabPath, "keytab-path", "", "Kerberos keytab location")
@@ -42,10 +45,22 @@ func main() {
 
 	fmt.Print("Start Solr Cloud Client ...\n")
 
-	securityConfig := solr.InitSecurityConfig(krb5Path, keytabPath, principal, realm)
+	if len(iniFileLocation) == 0 {
+		log.Fatal("INI config file option (--ini-file) is missing.")
+	}
 
-	solrConfig := solr.SolrConfig{url, "hadoop_logs", &securityConfig, "/solr",
-		solr.TLSConfig{}, true, 60}
+	if _, err := os.Stat(iniFileLocation); os.IsNotExist(err) {
+		// path/to/whatever does not exist
+		solr.GenerateIniFile(iniFileLocation)
+		os.Exit(0)
+	}
+
+	solrConfig, sshConfig := solr.GenerateSolrConfig(iniFileLocation)
+
+	solr.GenerateSolrData(&solrConfig, &sshConfig)
+
+	os.Exit(0)
+
 	solrClient, err := solr.NewSolrClient(url, collection, &solrConfig)
 
 	_, response, _ := solrClient.Query(nil)
