@@ -28,7 +28,7 @@ import (
 	"time"
 )
 
-func NewSolrClient(url string, collection string, solrConfig *SolrConfig) (*SolrClient, error) {
+func NewSolrClient(solrConfig *SolrConfig) (*SolrClient, error) {
 	httpClient := &http.Client{
 		Transport: &http.Transport{
 			Proxy:                 http.ProxyFromEnvironment,
@@ -38,9 +38,6 @@ func NewSolrClient(url string, collection string, solrConfig *SolrConfig) (*Solr
 			ResponseHeaderTimeout: 10 * time.Second,
 		},
 	}
-	solrConfig.Collection = collection
-	solrConfig.Url = url
-	solrConfig.SolrUrlContext = "/solr"
 
 	securityConfig := solrConfig.SecurityConfig
 

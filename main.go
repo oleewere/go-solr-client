@@ -5,29 +5,23 @@ import (
 	"flag"
 	"fmt"
 	"github.com/oleewere/go-solr-client/solr"
-	"github.com/satori/go.uuid"
+	"log"
 )
 
 var Version string
 var GitRevString string
+var ActionType string
 
 func main() {
 
-	var collection string
-	var url string
-	var krb5Path string
-	var keytabPath string
-	var principal string
-	var realm string
 	var isVersionCheck bool
+	var iniFileLocation string
 
 	flag.BoolVar(&isVersionCheck, "version", false, "Print application version and git revision if available")
-	flag.StringVar(&url, "url", "http://localhost:8983", "URL name for Solr or Solr proxy")
-	flag.StringVar(&collection, "collection", "hadoop_logs", "Collection name for the Solr client")
-	flag.StringVar(&krb5Path, "krb-conf-path", "", "Kerberos config location")
-	flag.StringVar(&keytabPath, "keytab-path", "", "Kerberos keytab location")
-	flag.StringVar(&principal, "principal", "", "Kerberos principal")
-	flag.StringVar(&realm, "realm", "", "Kerberos Realm e.g.: EXAMPLE.COM")
+	flag.StringVar(&iniFileLocation, "ini-file", "", "INI config file location")
+	if len(ActionType) == 0 {
+		flag.StringVar(&ActionType, "action-type", "generator", "action")
+	}
 
 	flag.Parse()
 
@@ -40,14 +34,19 @@ func main() {
 		os.Exit(0)
 	}
 
-	fmt.Print("Start Solr Cloud Client ...\n")
+	if len(iniFileLocation) == 0 {
+		log.Fatal("INI config file option (--ini-file) is missing.")
+	}
 
-	securityConfig := solr.InitSecurityConfig(krb5Path, keytabPath, principal, realm)
-
-	solrConfig := solr.SolrConfig{url, "hadoop_logs", &securityConfig, "/solr",
-		solr.TLSConfig{}, true, 60}
-	solrClient, err := solr.NewSolrClient(url, collection, &solrConfig)
-
+	if _, err := os.Stat(iniFileLocation); os.IsNotExist(err) {
+		solr.GenerateIniFile(iniFileLocation)
+		os.Exit(0)
+	}
+	log.Println("Starting Solr Client ...")
+	solrConfig, sshConfig := solr.GenerateSolrConfig(iniFileLocation)
+	solr.GenerateSolrData(&solrConfig, &sshConfig, iniFileLocation)
+    /*
+	solrClient, err := solr.NewSolrClient(&solrConfig)
 	_, response, _ := solrClient.Query(nil)
 	docs := response.Response.Docs
 	for _, doc := range docs {
@@ -58,29 +57,5 @@ func main() {
 		}
 		fmt.Printf("----------------------")
 	}
-
-	putDocs := solr.SolrDocuments{
-		solr.SolrDocument{
-			"id":          uuid.NewV4(),
-			"log_message": "oleewere@gmail.com",
-			"seq_num":     100,
-			"level":       "FATAL",
-			"logtime":     "2018-07-03T15:55:47.396Z",
-		},
-		solr.SolrDocument{
-			"id":          uuid.NewV4(),
-			"log_message": "oleewere@gmail.com",
-			"seq_num":     1000,
-			"level":       "FATAL",
-			"logtime":     "2018-07-03T15:55:47.396Z",
-		},
-	}
-
-	solrClient.Update(putDocs, nil, false)
-
-	if err != nil {
-		fmt.Print(err)
-	}
-
-	os.Exit(0)
+    */
 }
