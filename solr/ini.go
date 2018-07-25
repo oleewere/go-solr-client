@@ -20,6 +20,7 @@ import (
 )
 
 func GenerateIniFile(iniFileLocation string) {
+	log.Println("Generating new INI config file: " + iniFileLocation)
 	cfg := ini.Empty()
 
 	cfg.NewSection("security")
