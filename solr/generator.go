@@ -24,6 +24,8 @@ import (
 	"github.com/go-ini/ini"
 	"github.com/satori/go.uuid"
 	"strings"
+	"math/rand"
+	"time"
 )
 
 // Use to generate Solr data, also scp keytab file to local if kerberos and ssl config is enabled
@@ -60,47 +62,46 @@ func GenerateSolrData(solrConfig *SolrConfig, sshConfig *SSHConfig, iniFileLocat
 		log.Fatal("Fail to read file: " + iniFileLocation)
 	}
 	numWrites, err := cfg.Section("generator").Key("num_writes").Int()
+	docsPerWrite, err := cfg.Section("generator").Key("num_docs_per_write").Int()
 	clusterField := cfg.Section("generator").Key("cluster_field").String()
 	clusterNum, err := cfg.Section("generator").Key("cluster_num").Int()
-	hostnameField := cfg.Section("generator").Key("hostname_field").String()
-	hostnameNum, err := cfg.Section("generator").Key("hostname_num").Int()
+	filterableField := cfg.Section("generator").Key("filterable_field").String()
+	filterableFieldNum, err := cfg.Section("generator").Key("filterable_field_num").Int()
 	levelField := cfg.Section("generator").Key("level_field").String()
 	levels := strings.Split(cfg.Section("generator").Key("level_values").String(), ",")
 	typeField := cfg.Section("generator").Key("type_field").String()
 	types := strings.Split(cfg.Section("generator").Key("type_values").String(), ",")
 	dateField := cfg.Section("generator").Key("date_field").String()
-	datePattern := cfg.Section("generator").Key("date_pattern").String()
 	messageFields := strings.Split(cfg.Section("generator").Key("message_fields").String(), ",")
 	numFields := strings.Split(cfg.Section("generator").Key("num_fields").String(), ",")
 
+	solrClient, err := NewSolrClient(solrConfig)
+
 	for i := 1; i <= numWrites; i++ {
 		putDocs := SolrDocuments{}
-		for i := 1; i <= 10; i++ {
+		for j := 1; j <= docsPerWrite; j++ {
 			solrDoc :=  make(map[string]interface{})
-			solrDoc["id"] = uuid.NewV4()
+			solrDoc["id"] = uuid.NewV4().String()
+			solrDoc[clusterField] = "cluster" + fmt.Sprintf("%d", rand.Intn(clusterNum))
+			solrDoc[filterableField] = "random-name-" + fmt.Sprintf("%d", rand.Intn(filterableFieldNum))
+			solrDoc[levelField] = levels[rand.Int() % len(levels)]
+			solrDoc[typeField] = types[rand.Int() % len(types)]
+			solrDoc[dateField] = time.Now().UTC().Format("2006-01-02T15:04:05Z07:00")
+			for _, msgField := range messageFields {
+				solrDoc[msgField] = "Random message: " + uuid.NewV4().String()
+			}
+
+			for _, nField := range numFields {
+				solrDoc[nField] = rand.Intn(3000)
+			}
 
 			putDocs = append(putDocs, solrDoc)
 		}
+		randomMsg := fmt.Sprintf("Sending %d documents to Solr: %d/%d ...", docsPerWrite, i, numWrites)
+		log.Println(randomMsg)
+		solrClient.Update(putDocs, nil, false)
 	}
-
-	os.Exit(0)
-
-	solrClient, err := NewSolrClient(solrConfig)
-
-	_, response, _ := solrClient.Query(nil)
-	docs := response.Response.Docs
-	for _, doc := range docs {
-		fmt.Printf("----------------------")
-		for k, v := range doc {
-			fmt.Print("key: ", k)
-			fmt.Println(" , value: ", v)
-		}
-		fmt.Printf("----------------------")
-	}
-
-	if err != nil {
-		fmt.Print(err)
-	}
+	log.Println("Solr random documents generation has finished.")
 }
 func copyFileToLocal(srcFilePath string, destFilePath string, sftpClient *sftp.Client) {
 	srcFile, err := sftpClient.Open(srcFilePath)

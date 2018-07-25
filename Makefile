@@ -16,6 +16,9 @@ GIT_REV_SHORT = $(shell git rev-parse --short HEAD)
 install:
 	go install
 
+build-generator:
+	go build -ldflags "-X main.GitRevString=$(GIT_REV_SHORT) -X main.Version=$(VERSION) -X main.ActionType=generator" -o solr-docs-generator .
+
 build:
 	go build -ldflags "-X main.GitRevString=$(GIT_REV_SHORT) -X main.Version=$(VERSION)" .
 
