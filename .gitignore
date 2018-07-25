@@ -15,5 +15,5 @@
 
 .idea/
 
-native-solr-client
+go-solr-client
 solr-docs-generator
