@@ -71,7 +71,7 @@ func GenerateSolrConfig(iniFileLocation string) (SolrConfig, SSHConfig) {
 		log.Fatal("Fail to read file: " + iniFileLocation)
 	}
 
-	kerberosEnabled, err := cfg.Section("security").Key("kerberosEnabled").Bool()
+	kerberosEnabled, _ := cfg.Section("security").Key("kerberosEnabled").Bool()
 	keytabPath := cfg.Section("security").Key("kerberosKeytab").String()
 	principal := cfg.Section("security").Key("kerberosPrincipal").String()
 	realm := cfg.Section("security").Key("kerberosRealm").String()
