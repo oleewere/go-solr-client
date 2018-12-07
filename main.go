@@ -59,17 +59,4 @@ func main() {
 	log.Println("Starting Solr Client ...")
 	solrConfig, sshConfig := solr.GenerateSolrConfig(iniFileLocation)
 	solr.GenerateSolrData(&solrConfig, &sshConfig, iniFileLocation)
-	/*
-		solrClient, err := solr.NewSolrClient(&solrConfig)
-		_, response, _ := solrClient.Query(nil)
-		docs := response.Response.Docs
-		for _, doc := range docs {
-			fmt.Printf("----------------------")
-			for k, v := range doc {
-				fmt.Print("key: ", k)
-				fmt.Println(" , value: ", v)
-			}
-			fmt.Printf("----------------------")
-		}
-	*/
 }

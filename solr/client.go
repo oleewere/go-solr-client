@@ -28,6 +28,7 @@ import (
 	"time"
 )
 
+// NewSolrClient initalize a new Solr client based on configuration type
 func NewSolrClient(solrConfig *SolrConfig) (*SolrClient, error) {
 	httpClient := &http.Client{
 		Transport: &http.Transport{
@@ -70,7 +71,7 @@ func NewSolrClient(solrConfig *SolrConfig) (*SolrClient, error) {
 	return &solrClient, nil
 }
 
-// Set initial security config on start
+// InitSecurityConfig set initial security config on start
 func InitSecurityConfig(krb5Path string, keytabPath string, principal string, realm string) SecurityConfig {
 	var securityConfig SecurityConfig
 	if len(keytabPath) > 0 {
@@ -82,14 +83,14 @@ func InitSecurityConfig(krb5Path string, keytabPath string, principal string, re
 	return securityConfig
 }
 
-// Add Auth header with basic auth credentials
+// AddBasicAuthHeader add Auth header with basic auth credentials
 func AddBasicAuthHeader(request *http.Request, solrConfig *SolrConfig) {
 	if solrConfig.SecurityConfig.basicAuthConfig != nil && solrConfig.SecurityConfig.basicAuthEnabled {
 		request.SetBasicAuth(solrConfig.SecurityConfig.basicAuthConfig.username, solrConfig.SecurityConfig.basicAuthConfig.password)
 	}
 }
 
-// Add WWW-Authenticate header (SPNEGO) in case of kerberos is enabled
+// AddNegotiateHeader add WWW-Authenticate header (SPNEGO) in case of kerberos is enabled
 func AddNegotiateHeader(request *http.Request, solrConfig *SolrConfig) {
 	if solrConfig.SecurityConfig.kerberosConfig != nil && solrConfig.SecurityConfig.kerberosEnabled {
 		spn := ""
@@ -98,7 +99,7 @@ func AddNegotiateHeader(request *http.Request, solrConfig *SolrConfig) {
 	}
 }
 
-// Get Solr collection url with url context (if exists) and url suffix
+// GetSolrCollectionUri gather Solr collection url with url context (if exists) and url suffix
 // e.g.: url - https://myurl:8886, context: /solr, suffix: /update/json/docs = https://myurl:8886/solr/update/json/docs
 func GetSolrCollectionUri(solrConfig *SolrConfig, uriSuffix string) string {
 	var uriPrefix = solrConfig.Url
@@ -109,6 +110,7 @@ func GetSolrCollectionUri(solrConfig *SolrConfig, uriSuffix string) string {
 	return uri
 }
 
+// Update send documents to Solr
 func (solrClient *SolrClient) Update(docs interface{}, parameters *url.Values, commit bool) (bool, *SolrResponseData, error) {
 	httpClient := solrClient.httpClient
 	uri := GetSolrCollectionUri(solrClient.solrConfig, "update")
@@ -148,6 +150,7 @@ func (solrClient *SolrClient) Update(docs interface{}, parameters *url.Values, c
 	return true, &solrResponse, nil
 }
 
+// Query get Solr data based on parameters
 func (solrClient *SolrClient) Query(parameters *url.Values) (bool, *SolrResponseData, error) {
 	httpClient := solrClient.httpClient
 	uri := GetSolrCollectionUri(solrClient.solrConfig, "select")

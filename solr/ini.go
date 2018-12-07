@@ -19,6 +19,7 @@ import (
 	"log"
 )
 
+// GenerateIniFile create an ini file to a specific location
 func GenerateIniFile(iniFileLocation string) {
 	log.Println("Generating new INI config file: " + iniFileLocation)
 	cfg := ini.Empty()
@@ -63,6 +64,7 @@ func GenerateIniFile(iniFileLocation string) {
 	cfg.SaveTo(iniFileLocation)
 }
 
+// GenerateSolrConfig create sample ini file for Solr data generation
 func GenerateSolrConfig(iniFileLocation string) (SolrConfig, SSHConfig) {
 	cfg, err := ini.Load(iniFileLocation)
 	if err != nil {

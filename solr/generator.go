@@ -30,12 +30,14 @@ import (
 	"time"
 )
 
+// SolrDataProcessor type for processing Solr data
 type SolrDataProcessor struct {
 	BatchContext *processor.BatchContext
 	Mutex        *sync.Mutex
 	SolrClient   *SolrClient
 }
 
+// Process send gathered data to Solr
 func (p SolrDataProcessor) Process() error {
 	fmt.Println("Processing...")
 	p.Mutex.Lock()
@@ -44,15 +46,17 @@ func (p SolrDataProcessor) Process() error {
 	return err
 }
 
+// GetBatchContext gather batch context that will be used by processor
 func (s SolrDataProcessor) GetBatchContext() *processor.BatchContext {
 	return s.BatchContext
 }
 
+// HandleError handle errors during time based buffer processing (it is not used by this generator)
 func (s SolrDataProcessor) HandleError(err error) {
 	fmt.Println(err)
 }
 
-// Use to generate Solr data, also scp keytab file to local if kerberos and ssl config is enabled
+// GenerateSolrData Use to generate Solr data, also scp keytab file to local if kerberos and ssl config is enabled
 func GenerateSolrData(solrConfig *SolrConfig, sshConfig *SSHConfig, iniFileLocation string) {
 	if sshConfig.Enabled {
 		privateKeyContent, err := ioutil.ReadFile(sshConfig.PrivateKeyPath)
@@ -138,6 +142,7 @@ func createRandomSolrDoc(clusterField string, clusterNum int, filterableField st
 	}
 	return solrDoc
 }
+
 func copyFileToLocal(srcFilePath string, destFilePath string, sftpClient *sftp.Client) {
 	srcFile, err := sftpClient.Open(srcFilePath)
 	if err != nil {

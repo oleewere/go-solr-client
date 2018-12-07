@@ -19,6 +19,7 @@ import (
 	"net/http"
 )
 
+// KerberosConfig holds kerberos related configurations
 type KerberosConfig struct {
 	keytab         string
 	principal      string
@@ -27,11 +28,13 @@ type KerberosConfig struct {
 	kerberosClient *client.Client
 }
 
+// BasicAuthConfig hold authentication credentials
 type BasicAuthConfig struct {
 	username string
 	password string
 }
 
+// SecurityConfig holds security related configurations
 type SecurityConfig struct {
 	kerberosEnabled  bool
 	basicAuthEnabled bool
@@ -39,11 +42,13 @@ type SecurityConfig struct {
 	basicAuthConfig  *BasicAuthConfig
 }
 
+// TLSConfig holds TLS related configurations
 type TLSConfig struct {
 	cert    string
 	enabled bool
 }
 
+// SolrConfig holds Solr related configurations
 type SolrConfig struct {
 	Url                   string
 	Collection            string
@@ -54,20 +59,25 @@ type SolrConfig struct {
 	ConnectTimeoutSeconds int
 }
 
+// SolrClient represents a Solr connection that is used to communicate with Solr HTTP endpoints
 type SolrClient struct {
 	solrConfig *SolrConfig
 	httpClient *http.Client
 }
 
+// SolrResponseData represents Solr response data that contains the response itself and the response header as well
 type SolrResponseData struct {
 	ResponseHeader SolrResponseHeader `json:"responseHeader"`
 	Response       SolrResponse       `json:"response"`
 }
 
+// SolrDocument represents a Solr document (document map)
 type SolrDocument map[string]interface{}
 
+// SolrDocuments holds array of Solr documents
 type SolrDocuments []SolrDocument
 
+// SolrResponse represents a Solr HTTP response
 type SolrResponse struct {
 	NumFound int32          `json:"numFound,omitempty"`
 	Start    int32          `json:"start,omitempty"`
@@ -75,12 +85,14 @@ type SolrResponse struct {
 	Docs     []SolrDocument `json:"docs,omitempty"`
 }
 
+// SolrResponseHeader represents Solr request headers from Solr HTTP response
 type SolrResponseHeader struct {
 	Status int32             `json:"status,omitempty"`
 	QTime  int32             `json:"QTime,omitempty"`
 	Params map[string]string `json:"params,omitempty"`
 }
 
+// SSHConfig holds SSH related configs that is used by the data generator (to gather keytabs if kerberos is enabled)
 type SSHConfig struct {
 	Enabled          bool
 	Username         string
