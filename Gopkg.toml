@@ -32,6 +32,10 @@
   name = "gopkg.in/jcmturner/gokrb5.v4"
   version = "4.1.2"
 
+[[constraint]]
+  name = "github.com/oleewere/go-buffered-processor"
+  version = "0.1.0"
+
 [prune]
   go-tests = true
   unused-packages = true

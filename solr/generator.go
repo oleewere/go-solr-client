@@ -22,11 +22,35 @@ import (
 	"fmt"
 	"github.com/pkg/sftp"
 	"github.com/go-ini/ini"
+	"github.com/oleewere/go-buffered-processor/processor"
 	"github.com/satori/go.uuid"
 	"strings"
 	"math/rand"
 	"time"
+	"sync"
 )
+
+type SolrDataProcessor struct {
+	BatchContext *processor.BatchContext
+	Mutex sync.Mutex
+	SolrClient *SolrClient
+}
+
+func (p SolrDataProcessor) Process() error {
+	fmt.Println("Processing...")
+	p.Mutex.Lock()
+	defer p.Mutex.Unlock()
+	_, _, err := p.SolrClient.Update(p.BatchContext.BufferData, nil, true)
+	return err
+}
+
+func (s SolrDataProcessor) GetBatchContext() *processor.BatchContext {
+	return s.BatchContext
+}
+
+func (s SolrDataProcessor) HandleError(err error) {
+	fmt.Println(err)
+}
 
 // Use to generate Solr data, also scp keytab file to local if kerberos and ssl config is enabled
 func GenerateSolrData(solrConfig *SolrConfig, sshConfig *SSHConfig, iniFileLocation string) {
@@ -77,31 +101,42 @@ func GenerateSolrData(solrConfig *SolrConfig, sshConfig *SSHConfig, iniFileLocat
 
 	solrClient, err := NewSolrClient(solrConfig)
 
+	batchContext := processor.CreateDefaultBatchContext()
+	batchContext.MaxBufferSize = docsPerWrite
+	batchContext.MaxRetries = 20
+	batchContext.RetryTimeInterval = 10
+
+	proc := SolrDataProcessor{SolrClient: solrClient, BatchContext: batchContext}
+
 	for i := 1; i <= numWrites; i++ {
-		putDocs := SolrDocuments{}
 		for j := 1; j <= docsPerWrite; j++ {
-			solrDoc :=  make(map[string]interface{})
-			solrDoc["id"] = uuid.NewV4().String()
-			solrDoc[clusterField] = "cluster" + fmt.Sprintf("%d", rand.Intn(clusterNum))
-			solrDoc[filterableField] = "random-name-" + fmt.Sprintf("%d", rand.Intn(filterableFieldNum))
-			solrDoc[levelField] = levels[rand.Int() % len(levels)]
-			solrDoc[typeField] = types[rand.Int() % len(types)]
-			solrDoc[dateField] = time.Now().UTC().Format("2006-01-02T15:04:05Z07:00")
-			for _, msgField := range messageFields {
-				solrDoc[msgField] = "Random message: " + uuid.NewV4().String()
-			}
+			solrDoc := createRandomSolrDoc(clusterField, clusterNum, filterableField, filterableFieldNum, levelField, levels, typeField, types, dateField, messageFields, numFields)
 
-			for _, nField := range numFields {
-				solrDoc[nField] = rand.Intn(3000)
-			}
-
-			putDocs = append(putDocs, solrDoc)
+			processor.ProcessData(solrDoc, proc)
 		}
 		randomMsg := fmt.Sprintf("Sending %d documents to Solr: %d/%d ...", docsPerWrite, i, numWrites)
 		log.Println(randomMsg)
-		solrClient.Update(putDocs, nil, false)
 	}
+	proc.Process()
 	log.Println("Solr random documents generation has finished.")
+}
+
+func createRandomSolrDoc(clusterField string, clusterNum int, filterableField string, filterableFieldNum int, levelField string, levels []string,
+	typeField string, types []string, dateField string, messageFields []string, numFields []string) map[string]interface{} {
+	solrDoc := make(map[string]interface{})
+	solrDoc["id"] = uuid.NewV4().String()
+	solrDoc[clusterField] = "cluster" + fmt.Sprintf("%d", rand.Intn(clusterNum))
+	solrDoc[filterableField] = "random-name-" + fmt.Sprintf("%d", rand.Intn(filterableFieldNum))
+	solrDoc[levelField] = levels[rand.Int()%len(levels)]
+	solrDoc[typeField] = types[rand.Int()%len(types)]
+	solrDoc[dateField] = time.Now().UTC().Format("2006-01-02T15:04:05Z07:00")
+	for _, msgField := range messageFields {
+		solrDoc[msgField] = "Random message: " + uuid.NewV4().String()
+	}
+	for _, nField := range numFields {
+		solrDoc[nField] = rand.Intn(3000)
+	}
+	return solrDoc
 }
 func copyFileToLocal(srcFilePath string, destFilePath string, sftpClient *sftp.Client) {
 	srcFile, err := sftpClient.Open(srcFilePath)

@@ -4,14 +4,14 @@
 [[projects]]
   name = "github.com/go-ini/ini"
   packages = ["."]
-  revision = "358ee7663966325963d4e8b2e1fbd570c5195153"
-  version = "v1.38.1"
+  revision = "ffaaebdac6e54ce73b4e196b8406920921304ec9"
+  version = "v1.39.2"
 
 [[projects]]
-  branch = "master"
   name = "github.com/hashicorp/go-uuid"
   packages = ["."]
-  revision = "27454136f0364f2d44b1276c552d69105cf8c498"
+  revision = "de160f5c59f693fed329e73e291bb751fe4ea4dc"
+  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
@@ -29,6 +29,12 @@
   version = "v0.1.0"
 
 [[projects]]
+  name = "github.com/oleewere/go-buffered-processor"
+  packages = ["processor"]
+  revision = "092284674117d397641be98d7f2318d96f8bc495"
+  version = "v0.1.0"
+
+[[projects]]
   name = "github.com/pkg/errors"
   packages = ["."]
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
@@ -37,8 +43,8 @@
 [[projects]]
   name = "github.com/pkg/sftp"
   packages = ["."]
-  revision = "57673e38ea946592a59c26592b7e6fbda646975b"
-  version = "v1.8.0"
+  revision = "08de04f133f27844173471167014e1a753655ac8"
+  version = "v1.8.3"
 
 [[projects]]
   name = "github.com/satori/go.uuid"
@@ -60,7 +66,7 @@
     "poly1305",
     "ssh"
   ]
-  revision = "c126467f60eb25f8f27e5a981f32a87e3965053f"
+  revision = "505ab145d0a99da450461ae2c1a9f6cd10d1f447"
 
 [[projects]]
   name = "gopkg.in/jcmturner/aescts.v1"
@@ -115,6 +121,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4e9b7684b19c827985b7eac8e1da3d5a9429603ee7dc058c9ab3a55b694aa77b"
+  inputs-digest = "93b6786e55c66189b3b93c9f37dea9f47f9a2b25b82a1591ff66a37e94b54ac6"
   solver-name = "gps-cdcl"
   solver-version = 1
