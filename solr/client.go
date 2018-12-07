@@ -28,7 +28,7 @@ import (
 	"time"
 )
 
-// NewSolrClient initalize a new Solr client based on configuration type
+// NewSolrClient initialize a new Solr client based on configuration type
 func NewSolrClient(solrConfig *SolrConfig) (*SolrClient, error) {
 	httpClient := &http.Client{
 		Transport: &http.Transport{
@@ -58,6 +58,9 @@ func NewSolrClient(solrConfig *SolrConfig) (*SolrClient, error) {
 			log.Fatal(err)
 		}
 		cfg, err := config.Load(krb5confPath)
+		if err != nil {
+			log.Fatal(err)
+		}
 		cl := client.NewClientWithKeytab(principalName, realm, kt)
 		cl.WithConfig(cfg)
 		errLogin := cl.Login()
@@ -142,12 +145,12 @@ func (solrClient *SolrClient) Update(docs interface{}, parameters *url.Values, c
 	bodyBytes, err := ioutil.ReadAll(response.Body)
 
 	var solrResponse SolrResponseData
-	json_err := json.Unmarshal(bodyBytes, &solrResponse)
-	if json_err != nil {
-		return false, nil, json_err
+	jsonErr := json.Unmarshal(bodyBytes, &solrResponse)
+	if jsonErr != nil {
+		return false, nil, jsonErr
 	}
 
-	return true, &solrResponse, nil
+	return true, &solrResponse, err
 }
 
 // Query get Solr data based on parameters
@@ -188,9 +191,9 @@ func (solrClient *SolrClient) Query(parameters *url.Values) (bool, *SolrResponse
 	}
 
 	var solrResponse SolrResponseData
-	json_err := json.Unmarshal(bodyBytes, &solrResponse)
-	if json_err != nil {
-		return false, nil, json_err
+	jsonErr := json.Unmarshal(bodyBytes, &solrResponse)
+	if jsonErr != nil {
+		return false, nil, jsonErr
 	}
 	return true, &solrResponse, nil
 }
