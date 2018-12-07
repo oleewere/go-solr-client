@@ -22,8 +22,11 @@ import (
 	"log"
 )
 
+// Version built-in version type
 var Version string
+// GitRevString built-in git revision string
 var GitRevString string
+// ActionType type of the action, currently only generator is supported (which is built-in)
 var ActionType string
 
 func main() {

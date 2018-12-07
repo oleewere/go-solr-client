@@ -39,7 +39,7 @@ type SolrDataProcessor struct {
 
 // Process send gathered data to Solr
 func (p SolrDataProcessor) Process() error {
-	fmt.Println("Processing...")
+	log.Println("Processing...")
 	p.Mutex.Lock()
 	defer p.Mutex.Unlock()
 	_, _, err := p.SolrClient.Update(p.BatchContext.BufferData, nil, true)
@@ -47,12 +47,12 @@ func (p SolrDataProcessor) Process() error {
 }
 
 // GetBatchContext gather batch context that will be used by processor
-func (s SolrDataProcessor) GetBatchContext() *processor.BatchContext {
-	return s.BatchContext
+func (p SolrDataProcessor) GetBatchContext() *processor.BatchContext {
+	return p.BatchContext
 }
 
 // HandleError handle errors during time based buffer processing (it is not used by this generator)
-func (s SolrDataProcessor) HandleError(err error) {
+func (p SolrDataProcessor) HandleError(err error) {
 	fmt.Println(err)
 }
 
@@ -89,12 +89,12 @@ func GenerateSolrData(solrConfig *SolrConfig, sshConfig *SSHConfig, iniFileLocat
 	if err != nil {
 		log.Fatal("Fail to read file: " + iniFileLocation)
 	}
-	numWrites, err := cfg.Section("generator").Key("num_writes").Int()
-	docsPerWrite, err := cfg.Section("generator").Key("num_docs_per_write").Int()
+	numWrites, _ := cfg.Section("generator").Key("num_writes").Int()
+	docsPerWrite, _ := cfg.Section("generator").Key("num_docs_per_write").Int()
 	clusterField := cfg.Section("generator").Key("cluster_field").String()
-	clusterNum, err := cfg.Section("generator").Key("cluster_num").Int()
+	clusterNum, _ := cfg.Section("generator").Key("cluster_num").Int()
 	filterableField := cfg.Section("generator").Key("filterable_field").String()
-	filterableFieldNum, err := cfg.Section("generator").Key("filterable_field_num").Int()
+	filterableFieldNum, _ := cfg.Section("generator").Key("filterable_field_num").Int()
 	levelField := cfg.Section("generator").Key("level_field").String()
 	levels := strings.Split(cfg.Section("generator").Key("level_values").String(), ",")
 	typeField := cfg.Section("generator").Key("type_field").String()
@@ -104,6 +104,9 @@ func GenerateSolrData(solrConfig *SolrConfig, sshConfig *SSHConfig, iniFileLocat
 	numFields := strings.Split(cfg.Section("generator").Key("num_fields").String(), ",")
 
 	solrClient, err := NewSolrClient(solrConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	batchContext := processor.CreateDefaultBatchContext()
 	batchContext.MaxBufferSize = docsPerWrite

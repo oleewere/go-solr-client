@@ -80,10 +80,10 @@ func GenerateSolrConfig(iniFileLocation string) (SolrConfig, SSHConfig) {
 	solrUrl := cfg.Section("solr").Key("url").String()
 	solrContext := cfg.Section("solr").Key("context").String()
 	solrCollection := cfg.Section("solr").Key("collection").String()
-	solrTlsEnabled, err := cfg.Section("solr").Key("ssl").Bool()
-	solrConnectionTimeout, err := cfg.Section("solr").Key("connection_timeout").Int()
+	solrTlsEnabled, _ := cfg.Section("solr").Key("ssl").Bool()
+	solrConnectionTimeout, _ := cfg.Section("solr").Key("connection_timeout").Int()
 
-	sshEnabled, err := cfg.Section("ssh").Key("enabled").Bool()
+	sshEnabled, _ := cfg.Section("ssh").Key("enabled").Bool()
 	sshUsername := cfg.Section("ssh").Key("username").String()
 	sshHostname := cfg.Section("ssh").Key("hostname").String()
 	sshPrivateKeyPath := cfg.Section("ssh").Key("private_key_path").String()
