@@ -32,7 +32,7 @@ import (
 
 type SolrDataProcessor struct {
 	BatchContext *processor.BatchContext
-	Mutex sync.Mutex
+	Mutex *sync.Mutex
 	SolrClient *SolrClient
 }
 
