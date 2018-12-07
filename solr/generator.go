@@ -15,25 +15,25 @@
 package solr
 
 import (
-	"io/ioutil"
-	"golang.org/x/crypto/ssh"
-	"log"
-	"os"
 	"fmt"
-	"github.com/pkg/sftp"
 	"github.com/go-ini/ini"
 	"github.com/oleewere/go-buffered-processor/processor"
+	"github.com/pkg/sftp"
 	"github.com/satori/go.uuid"
-	"strings"
+	"golang.org/x/crypto/ssh"
+	"io/ioutil"
+	"log"
 	"math/rand"
-	"time"
+	"os"
+	"strings"
 	"sync"
+	"time"
 )
 
 type SolrDataProcessor struct {
 	BatchContext *processor.BatchContext
-	Mutex *sync.Mutex
-	SolrClient *SolrClient
+	Mutex        *sync.Mutex
+	SolrClient   *SolrClient
 }
 
 func (p SolrDataProcessor) Process() error {
@@ -67,7 +67,7 @@ func GenerateSolrData(solrConfig *SolrConfig, sshConfig *SSHConfig, iniFileLocat
 			},
 			HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 		}
-		client, err := ssh.Dial("tcp", sshConfig.Hostname + ":22", clientConfig)
+		client, err := ssh.Dial("tcp", sshConfig.Hostname+":22", clientConfig)
 		if err != nil {
 			panic("Failed to dial: " + err.Error())
 		}
