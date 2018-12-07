@@ -113,7 +113,7 @@ func GenerateSolrData(solrConfig *SolrConfig, sshConfig *SSHConfig, iniFileLocat
 	batchContext.MaxRetries = 20
 	batchContext.RetryTimeInterval = 10
 
-	proc := SolrDataProcessor{SolrClient: solrClient, BatchContext: batchContext}
+	proc := SolrDataProcessor{SolrClient: solrClient, BatchContext: batchContext, Mutex: &sync.Mutex{}}
 
 	for i := 1; i <= numWrites; i++ {
 		for j := 1; j <= docsPerWrite; j++ {
