@@ -31,8 +31,8 @@
 [[projects]]
   name = "github.com/oleewere/go-buffered-processor"
   packages = ["processor"]
-  revision = "092284674117d397641be98d7f2318d96f8bc495"
-  version = "v0.1.0"
+  revision = "c648896440f35f646814c8a2601923d2641b2dc2"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/pkg/errors"
@@ -121,6 +121,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "93b6786e55c66189b3b93c9f37dea9f47f9a2b25b82a1591ff66a37e94b54ac6"
+  inputs-digest = "146c5864794d5052633574ebd8aed5289963d10b9019187bb6e1f5b3a687bbd5"
   solver-name = "gps-cdcl"
   solver-version = 1

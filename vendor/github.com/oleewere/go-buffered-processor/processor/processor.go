@@ -18,35 +18,27 @@ import (
 	"time"
 )
 
-func CreateDefaultBatchContext() *BatchContext {
-	emptyData := make([]interface{}, 0)
-	actualTime := time.Now()
-	return &BatchContext{
-		BufferData: &emptyData, MaxBufferSize: 1000, LastChanged: &actualTime, TimeBasedProcessing: true,
-		ProcessTimeInterval: 30 * time.Second, RetryTimeInterval: 5 * time.Second}
-}
-
-func ProcessData(data interface{}, processor Processor) error {
-	batchContext := processor.GetBatchContext()
+// ProcessData processes the buffer data and clean the buffer - processing itself should be implemented
+func ProcessData(data interface{}, batchContext *BatchContext, processor Processor) error {
 	dataArray := (*batchContext).BufferData
 	*dataArray = append(*dataArray, data)
 	if batchContext.MaxBufferSize <= len(*dataArray) {
 		err := retryFunction(batchContext.MaxRetries, batchContext.RetryTimeInterval, func() error {
-			return processor.Process()
+			return processor.Process(batchContext)
 		})
 		if err != nil {
 			return err
-		} else {
-			actualTime := time.Now()
-			*batchContext.LastChanged = actualTime
-			*batchContext.BufferData = make([]interface{}, 0)
 		}
+		actualTime := time.Now()
+		*batchContext.LastChanged = actualTime
+		*batchContext.BufferData = make([]interface{}, 0)
 	}
 	return nil
 }
 
-func StartTimeBasedProcessing(processor Processor, waitIntervalSec time.Duration) {
-	batchContext := processor.GetBatchContext()
+// StartTimeBasedProcessing starts a scheduled tasks (with time interval) to call Process on the Processor interface.
+// use this as a go routine, that can be useful if the buffered data has not updated recently, but it is needed to process the data anyway after some time.
+func StartTimeBasedProcessing(batchContext *BatchContext, processor Processor, waitIntervalSec time.Duration) {
 	if batchContext.TimeBasedProcessing {
 		for {
 			lastChangeTime := *batchContext.LastChanged
@@ -54,10 +46,10 @@ func StartTimeBasedProcessing(processor Processor, waitIntervalSec time.Duration
 			diff := time.Now().Sub(lastChangeTime)
 			if diff > processTimeInterval {
 				err := retryFunction(batchContext.MaxRetries, batchContext.RetryTimeInterval, func() error {
-					return processor.Process()
+					return processor.Process(batchContext)
 				})
 				if err != nil {
-					processor.HandleError(err)
+					processor.HandleError(batchContext, err)
 				} else {
 					actualTime := time.Now()
 					*batchContext.LastChanged = actualTime
@@ -67,6 +59,16 @@ func StartTimeBasedProcessing(processor Processor, waitIntervalSec time.Duration
 			time.Sleep(waitIntervalSec * time.Second)
 		}
 	}
+}
+
+// CreateDefaultBatchContext creates a default batch context (buffer size: 1000, lastChanged: actualTime, process time interval: 30 sec, retry time interval: 5)
+func CreateDefaultBatchContext() *BatchContext {
+	emptyData := make([]interface{}, 0)
+	emptyExtraParams := make(map[string]interface{})
+	actualTime := time.Now()
+	return &BatchContext{
+		BufferData: &emptyData, MaxBufferSize: 1000, LastChanged: &actualTime, TimeBasedProcessing: true,
+		ProcessTimeInterval: 30 * time.Second, RetryTimeInterval: 5 * time.Second, ExtraParams: emptyExtraParams}
 }
 
 func retryFunction(maxAttempts int, sleep time.Duration, fn func() error) error {

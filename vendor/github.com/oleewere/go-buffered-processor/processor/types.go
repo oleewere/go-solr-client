@@ -18,18 +18,30 @@ import (
 	"time"
 )
 
+// Processor interface that can be implemented to process buffered data (that is hold by the batch context)
 type Processor interface {
-	GetBatchContext() *BatchContext
-	Process() error
-	HandleError(error)
+	// Process handles/processes the data that is hold by the batch context
+	Process(*BatchContext) error
+	// HandleError handles the error that happens during time based data processing
+	HandleError(*BatchContext, error)
 }
 
+// BatchContext holds data buffer related information/configuration
 type BatchContext struct {
+	// BufferData storing data that needs to be processed
 	BufferData *[]interface{}
+	// MaxBufferSize maximum size of the buffer
 	MaxBufferSize int
+	// LastChanged time that is updated after the buffer has cleaned
 	LastChanged *time.Time
+	// TimeBasedProcessing flag that can enable time based processing of the buffered data
 	TimeBasedProcessing bool
+	// ProcessTimeInterval time that used to wait between time based processing tasks
 	ProcessTimeInterval time.Duration
+	// RetryTimeInterval sleep between data processing calls that is retried because of an error
 	RetryTimeInterval time.Duration
+	// MaxRetries maximum number of retries on fail, 0 means the data processing will retry forever
 	MaxRetries int
+	// ExtraParams holds any extra context data
+	ExtraParams map[string]interface{}
 }

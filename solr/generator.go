@@ -32,27 +32,21 @@ import (
 
 // SolrDataProcessor type for processing Solr data
 type SolrDataProcessor struct {
-	BatchContext *processor.BatchContext
-	Mutex        *sync.Mutex
-	SolrClient   *SolrClient
+	Mutex      *sync.Mutex
+	SolrClient *SolrClient
 }
 
 // Process send gathered data to Solr
-func (p SolrDataProcessor) Process() error {
+func (p SolrDataProcessor) Process(batchContext *processor.BatchContext) error {
 	log.Println("Processing...")
 	p.Mutex.Lock()
 	defer p.Mutex.Unlock()
-	_, _, err := p.SolrClient.Update(p.BatchContext.BufferData, nil, true)
+	_, _, err := p.SolrClient.Update(batchContext.BufferData, nil, true)
 	return err
 }
 
-// GetBatchContext gather batch context that will be used by processor
-func (p SolrDataProcessor) GetBatchContext() *processor.BatchContext {
-	return p.BatchContext
-}
-
 // HandleError handle errors during time based buffer processing (it is not used by this generator)
-func (p SolrDataProcessor) HandleError(err error) {
+func (p SolrDataProcessor) HandleError(batchContext *processor.BatchContext, err error) {
 	fmt.Println(err)
 }
 
@@ -113,18 +107,18 @@ func GenerateSolrData(solrConfig *SolrConfig, sshConfig *SSHConfig, iniFileLocat
 	batchContext.MaxRetries = 20
 	batchContext.RetryTimeInterval = 10
 
-	proc := SolrDataProcessor{SolrClient: solrClient, BatchContext: batchContext, Mutex: &sync.Mutex{}}
+	proc := SolrDataProcessor{SolrClient: solrClient, Mutex: &sync.Mutex{}}
 
 	for i := 1; i <= numWrites; i++ {
 		for j := 1; j <= docsPerWrite; j++ {
 			solrDoc := createRandomSolrDoc(clusterField, clusterNum, filterableField, filterableFieldNum, levelField, levels, typeField, types, dateField, messageFields, numFields)
 
-			processor.ProcessData(solrDoc, proc)
+			processor.ProcessData(solrDoc, batchContext, proc)
 		}
 		randomMsg := fmt.Sprintf("Sending %d documents to Solr: %d/%d ...", docsPerWrite, i, numWrites)
 		log.Println(randomMsg)
 	}
-	proc.Process()
+	proc.Process(batchContext)
 	log.Println("Solr random documents generation has finished.")
 }
 

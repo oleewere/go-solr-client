@@ -14,6 +14,7 @@
 .glide/
 
 .idea/
+dist
 solr-client.cfg
 go-solr-client
 solr-docs-generator
