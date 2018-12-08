@@ -14,11 +14,11 @@ FROM golang:1.10-alpine
 
 ADD . /go/src/github.com/oleewere/go-solr-client
 WORKDIR /go/src/github.com/oleewere/go-solr-client
-RUN go build -o /go-solr-client .
+RUN go build -o /solr-client .
 
 FROM alpine:3.7
 RUN apk add --no-cache ca-certificates
 
-COPY --from=0 /go-solr-client /
+COPY --from=0 /solr-client /
 
-ENTRYPOINT ["/go-solr-client"]
+ENTRYPOINT ["/solr-client"]
