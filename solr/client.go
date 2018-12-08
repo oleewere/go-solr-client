@@ -154,7 +154,7 @@ func (solrClient *SolrClient) Update(docs interface{}, parameters *url.Values, c
 }
 
 // Query get Solr data based on parameters
-func (solrClient *SolrClient) Query(parameters *url.Values) (bool, *SolrResponseData, error) {
+func (solrClient *SolrClient) Query(solrQuery *SolrQuery) (bool, *SolrResponseData, error) {
 	httpClient := solrClient.httpClient
 	uri := GetSolrCollectionUri(solrClient.solrConfig, "select")
 	var buf bytes.Buffer
@@ -163,12 +163,11 @@ func (solrClient *SolrClient) Query(parameters *url.Values) (bool, *SolrResponse
 		return false, nil, err
 	}
 
-	if parameters == nil {
-		parameters = &url.Values{}
-		parameters.Add("q", "*:*")
+	if solrQuery == nil {
+		solrQuery = CreateSolrQuery()
 	}
 
-	request.URL.RawQuery = parameters.Encode()
+	request.URL.RawQuery = solrQuery.Encode()
 	request.Header.Add("Content-Type", "application/json")
 
 	AddBasicAuthHeader(request, solrClient.solrConfig)

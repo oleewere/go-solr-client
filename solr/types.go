@@ -17,6 +17,7 @@ package solr
 import (
 	"gopkg.in/jcmturner/gokrb5.v4/client"
 	"net/http"
+	"net/url"
 )
 
 // KerberosConfig holds kerberos related configurations
@@ -101,4 +102,9 @@ type SSHConfig struct {
 	RemoteKrb5Conf   string
 	RemoteKeytab     string
 	Hostname         string
+}
+
+// SolrQuery represents a solr query object
+type SolrQuery struct {
+	params *url.Values
 }
