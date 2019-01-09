@@ -1,0 +1,63 @@
+# github.com/go-ini/ini v1.39.2
+github.com/go-ini/ini
+# github.com/hashicorp/go-uuid v1.0.0
+github.com/hashicorp/go-uuid
+# github.com/jcmturner/gofork v0.0.0-20180107083740-2aebee971930
+github.com/jcmturner/gofork/encoding/asn1
+github.com/jcmturner/gofork/x/crypto/pbkdf2
+# github.com/kr/fs v0.1.0
+github.com/kr/fs
+# github.com/oleewere/go-buffered-processor v1.1.0
+github.com/oleewere/go-buffered-processor/processor
+# github.com/pkg/errors v0.8.0
+github.com/pkg/errors
+# github.com/pkg/sftp v1.8.3
+github.com/pkg/sftp
+# github.com/satori/go.uuid v1.2.0
+github.com/satori/go.uuid
+# golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9
+golang.org/x/crypto/ssh
+golang.org/x/crypto/curve25519
+golang.org/x/crypto/ed25519
+golang.org/x/crypto/internal/chacha20
+golang.org/x/crypto/poly1305
+golang.org/x/crypto/ed25519/internal/edwards25519
+golang.org/x/crypto/internal/subtle
+golang.org/x/crypto/md4
+golang.org/x/crypto/pbkdf2
+# gopkg.in/jcmturner/aescts.v1 v1.0.1
+gopkg.in/jcmturner/aescts.v1
+# gopkg.in/jcmturner/dnsutils.v1 v1.0.1
+gopkg.in/jcmturner/dnsutils.v1
+# gopkg.in/jcmturner/gokrb5.v4 v4.1.2
+gopkg.in/jcmturner/gokrb5.v4/client
+gopkg.in/jcmturner/gokrb5.v4/config
+gopkg.in/jcmturner/gokrb5.v4/keytab
+gopkg.in/jcmturner/gokrb5.v4/credentials
+gopkg.in/jcmturner/gokrb5.v4/crypto
+gopkg.in/jcmturner/gokrb5.v4/crypto/etype
+gopkg.in/jcmturner/gokrb5.v4/gssapi
+gopkg.in/jcmturner/gokrb5.v4/iana/errorcode
+gopkg.in/jcmturner/gokrb5.v4/iana/keyusage
+gopkg.in/jcmturner/gokrb5.v4/iana/nametype
+gopkg.in/jcmturner/gokrb5.v4/iana/patype
+gopkg.in/jcmturner/gokrb5.v4/krberror
+gopkg.in/jcmturner/gokrb5.v4/messages
+gopkg.in/jcmturner/gokrb5.v4/types
+gopkg.in/jcmturner/gokrb5.v4/iana/etypeID
+gopkg.in/jcmturner/gokrb5.v4/crypto/common
+gopkg.in/jcmturner/gokrb5.v4/crypto/rfc3961
+gopkg.in/jcmturner/gokrb5.v4/crypto/rfc3962
+gopkg.in/jcmturner/gokrb5.v4/crypto/rfc4757
+gopkg.in/jcmturner/gokrb5.v4/crypto/rfc8009
+gopkg.in/jcmturner/gokrb5.v4/iana/chksumtype
+gopkg.in/jcmturner/gokrb5.v4/asn1tools
+gopkg.in/jcmturner/gokrb5.v4/iana
+gopkg.in/jcmturner/gokrb5.v4/iana/adtype
+gopkg.in/jcmturner/gokrb5.v4/iana/asnAppTag
+gopkg.in/jcmturner/gokrb5.v4/iana/flags
+gopkg.in/jcmturner/gokrb5.v4/iana/msgtype
+gopkg.in/jcmturner/gokrb5.v4/pac
+gopkg.in/jcmturner/gokrb5.v4/iana/addrtype
+gopkg.in/jcmturner/gokrb5.v4/mstypes
+gopkg.in/jcmturner/gokrb5.v4/ndr

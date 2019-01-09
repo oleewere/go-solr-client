@@ -8,7 +8,7 @@ require (
 	github.com/jtolds/gls v4.2.1+incompatible // indirect
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
-	github.com/oleewere/go-buffered-processor v1.0.0
+	github.com/oleewere/go-buffered-processor v1.1.0
 	github.com/pkg/errors v0.8.0 // indirect
 	github.com/pkg/sftp v1.8.3
 	github.com/satori/go.uuid v1.2.0
