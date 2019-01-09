@@ -22,38 +22,39 @@ func main() {
 	if kerberosEnabled {
 		securityConfig = InitSecurityConfig(krb5Path, keytabPath, principal, realm)
 	}
+	
 	// ...
 	
 	solrUrl := "http://localhost:8886"
 	solrCollection := "mycollection"
 	solrConext := "/solr"
 	tlsConfig := TLSConfig{}
+	
 	// ...
 	
 	solrConfig := SolrConfig{solrUrl, solrCollection, &securityConfig, solrContext,
 		tlsConfig, false, solrConnectionTimeout}
 	// ...
-	solrClient, err := NewSolrClient(solrConfig)
 	
+	solrClient, err := NewSolrClient(solrConfig)
 	// Create a query - example
 	solrQuery := solr.SolrQuery{}
-    solrQuery.Query("*:*")
+	solrQuery.Query("*:*")
 	// you can set params one-by-one with solrQuery.AddParam or solrQuery.SetParam etc.
-    solrClient.Query(&solrQuery)
+	solrClient.Query(&solrQuery)
 	
 	// Update docs - example 
 	solrDoc1 := make(map[string]interface{})
-    solrDoc1["id"] = uuid.NewV4().String()
-    // ...
-    solrDoc2 := make(map[string]interface{})
-    solrDoc2["id"] = uuid.NewV4().String()
-    // ...
-    solrDocs := make([]interface{}, 0)
-    solrDocs = append(solrDocs, solrDoc1)
-    solrDocs = append(solrDocs, solrDoc2)
-    // ...
-    solrClient.Update(solrDocs, nil, true)
-    
+	solrDoc1["id"] = uuid.NewV4().String()
+	// ...
+	solrDoc2 := make(map[string]interface{})
+	solrDoc2["id"] = uuid.NewV4().String()
+	// ...
+	solrDocs := make([]interface{}, 0)
+	solrDocs = append(solrDocs, solrDoc1)
+	solrDocs = append(solrDocs, solrDoc2)
+	// ...
+	solrClient.Update(solrDocs, nil, true)
 }
 ```
 
