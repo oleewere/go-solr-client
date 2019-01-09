@@ -71,7 +71,7 @@ func (q *SolrQuery) AddFields(fields []string) {
 	}
 }
 
-// AddFields adding fields to Solr query
+// AddPivotFields adding pivot fields to Solr query
 func (q *SolrQuery) AddPivotFields(pivotFields []string) {
 	q.SetParam("facet", "true")
 	if len(pivotFields) > 0 {
