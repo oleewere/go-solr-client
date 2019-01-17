@@ -40,7 +40,10 @@ func NewSolrClient(solrConfig *SolrConfig) (*SolrClient, error) {
 		},
 	}
 
-	securityConfig := solrConfig.SecurityConfig
+	var securityConfig SecurityConfig
+	if solrConfig.SecurityConfig == nil {
+		solrConfig.SecurityConfig = new(SecurityConfig)
+	}
 
 	if securityConfig.kerberosConfig != nil && len(securityConfig.kerberosConfig.keytab) != 0 {
 		securityConfig.kerberosEnabled = true
