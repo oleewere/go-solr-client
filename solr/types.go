@@ -15,9 +15,10 @@
 package solr
 
 import (
-	"gopkg.in/jcmturner/gokrb5.v4/client"
 	"net/http"
 	"net/url"
+
+	"gopkg.in/jcmturner/gokrb5.v4/client"
 )
 
 // KerberosConfig holds kerberos related configurations
@@ -68,8 +69,9 @@ type SolrClient struct {
 
 // SolrResponseData represents Solr response data that contains the response itself and the response header as well
 type SolrResponseData struct {
-	ResponseHeader SolrResponseHeader `json:"responseHeader"`
-	Response       SolrResponse       `json:"response"`
+	ResponseHeader SolrResponseHeader     `json:"responseHeader"`
+	Response       SolrResponse           `json:"response"`
+	Highlighting   map[string]interface{} `json:"highlighting,omitempty"`
 }
 
 // SolrDocument represents a Solr document (document map)
