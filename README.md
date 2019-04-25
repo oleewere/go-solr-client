@@ -38,7 +38,7 @@ func main() {
 	
 	solrClient, err := NewSolrClient(solrConfig)
 	// Create a query - example
-	solrQuery := solr.SolrQuery{}
+	solrQuery := solr.CreateSolrQuery()
 	solrQuery.Query("*:*")
 	// you can set params one-by-one with solrQuery.AddParam or solrQuery.SetParam etc.
 	solrClient.Query(&solrQuery)
