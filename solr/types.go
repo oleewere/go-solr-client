@@ -71,6 +71,7 @@ type SolrClient struct {
 type SolrResponseData struct {
 	ResponseHeader SolrResponseHeader     `json:"responseHeader"`
 	Response       SolrResponse           `json:"response"`
+	FacetCounts    map[string]interface{} `json:"facet_counts,omitempty"`
 	Highlighting   map[string]interface{} `json:"highlighting,omitempty"`
 }
 
